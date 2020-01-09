@@ -8,8 +8,8 @@ import time
 import cclyon_toolbox_lib as toolbox_lib
 
 # Checking required env variables
-toolbox_lib.get_env_variable("WORK_FOLDER")
-toolbox_lib.get_env_variable("RESULTS_FOLDER")
+toolbox_lib.get_env_variable("WORK_DIR")
+toolbox_lib.get_env_variable("RESULTS_DIR")
 
 parmeters_dict = dict()
 
@@ -68,11 +68,11 @@ if len(outfiles_base_name) > 200: outfiles_base_name = outfiles_base_name[0:200]
 print(toolbox_lib.gold_color + "Outfiles base name : " + toolbox_lib.reset_color + outfiles_base_name)
 
 this_python_script_path = os.path.dirname(os.path.realpath(__file__))
-WORK_FOLDER = os.environ.get("WORK_FOLDER")
-RESULTS_FOLDER = os.environ.get("WORK_FOLDER")
+WORK_DIR = os.environ.get("WORK_DIR")
+RESULTS_DIR = os.environ.get("WORK_DIR")
 launch_script_reservoir_path = this_python_script_path + "/LaunchCommand"
-execution_folder = RESULTS_FOLDER + "/" + script_names
-log_folder = WORK_FOLDER + "/Logs/" + command_arg_list[0] + "/"
+execution_folder = RESULTS_DIR + "/" + script_names
+log_folder = WORK_DIR + "/Logs/" + command_arg_list[0] + "/"
 
 toolbox_lib.mkdir(launch_script_reservoir_path)
 toolbox_lib.mkdir(execution_folder)
