@@ -88,7 +88,7 @@ job_command_arg_list.append("qsub")
 job_command_arg_list.append("-l os=" + toolbox.get_current_os())
 job_command_arg_list.append("-o " + job_log_file_path)
 job_command_arg_list.append("-e " + job_err_file_path)
-job_command_arg_list.append("-P P_t2k")
+job_command_arg_list.append("-P P_lpnhe")
 if parameters_dict["multithread-support"]:
     job_command_arg_list.append("-pe multicores 8 -q mc_long")
 job_command_arg_list.append("-l xrootd=1,mysql=1,sps=1,hpss=1,ct=" + parameters_dict["cpu_time"] + ",vmem=4G,fsize=20G")
@@ -104,6 +104,10 @@ if not is_dry_run:
         print(toolbox.reset_color)
     else:
         os.system("/bin/bash " + parameters_dict["bash_script"])
+else:
+    print(toolbox.blue_color)
+    print(job_launch_command)
+    print(toolbox.reset_color)
 
 
 print(toolbox.red_color +
