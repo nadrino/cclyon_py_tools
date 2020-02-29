@@ -7,8 +7,8 @@ import os
 
 parameters_dict = dict()
 
-is_dry_run = True
-do_run_prompt = False
+is_dry_run = False
+do_run_in_prompt = False
 this_script_file_name = os.path.basename(__file__)
 current_working_directory = os.getcwd()
 now_time_string = toolbox.get_now_time_string()
@@ -38,7 +38,7 @@ for arg_id in range(len(sys.argv)):
         is_dry_run = True
         print(toolbox.warning + "Dry run enabled.")
     elif sys.argv[arg_id] == "--interactive":
-        do_run_prompt = True
+        do_run_in_prompt = True
         print(toolbox.warning + "Script will be running interactively.")
     elif sys.argv[arg_id] == "--multithread-support":
         parameters_dict["multithread-support"] = True
@@ -63,6 +63,9 @@ dynamic_log_file_path = logs_folder_path + "/" + now_time_string + ".log"
 job_log_file_path = logs_folder_path + "/" + now_time_string + ".job.log"
 job_err_file_path = logs_folder_path + "/" + now_time_string + ".job.err"
 job_script_file_path = scripts_folder_path + "/" + now_time_string + ".sh"
+
+print(toolbox.info + "Log file : " + dynamic_log_file_path)
+print(toolbox.info + "Job script : " + job_script_file_path)
 
 launch_script_str =  "#! /bin/bash\n"
 launch_script_str += "\n"
@@ -95,7 +98,7 @@ job_command_arg_list.append(job_script_file_path)
 job_launch_command = " ".join(job_command_arg_list)
 
 if not is_dry_run:
-    if not do_run_prompt:
+    if not do_run_in_prompt:
         print(toolbox.blue_color)
         os.system(job_launch_command)
         print(toolbox.reset_color)
