@@ -62,7 +62,7 @@ toolbox.mkdir(scripts_folder_path)
 dynamic_log_file_path = logs_folder_path + "/" + now_time_string + ".log"
 job_log_file_path = logs_folder_path + "/" + now_time_string + ".job.log"
 job_err_file_path = logs_folder_path + "/" + now_time_string + ".job.err"
-job_script_file_path = scripts_folder_path + "/" + now_time_string + "_" + "_".join(parameters_dict["bash_script"].split(" ")) + ".sh"
+job_script_file_path = scripts_folder_path + "/job_" + now_time_string + ".sh"
 
 print(toolbox.info + "Log file : " + dynamic_log_file_path)
 print(toolbox.info + "Job script : " + job_script_file_path)
