@@ -262,6 +262,8 @@ def mkdir_cd_rootfile(root_file_, folder_path_):
 
     root_file_.cd(folder_path_)
     return root_file_.GetDirectory(folder_path_)
+
+
 def save_command_line_in_tfile(output_tfile_, command_line_):
     from ROOT import TNamed
     from ROOT import gDirectory
@@ -271,3 +273,7 @@ def save_command_line_in_tfile(output_tfile_, command_line_):
     TNamed("command_line_TNamed", command_line_).Write()
     current_directory.cd()
 
+
+def get_now_time_string():
+    import time
+    return time.strftime("%Y%m%d_%H%M%S", time.gmtime())
