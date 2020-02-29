@@ -29,7 +29,7 @@ if len(sys.argv) == 1:
     sys.exit(0)
 
 print(toolbox.red_color +
-      "************** " + str(parameters_dict["this_script_file_name"]) + " starts **************" +
+      "************** " + this_script_file_name + " starts **************" +
       toolbox.reset_color)
 
 for arg_id in range(len(sys.argv)):
@@ -104,5 +104,5 @@ if not is_dry_run:
 
 
 print(toolbox.red_color +
-      "************** " + str(parameters_dict["this_script_file_name"]) + " ended. **************" +
+      "************** " + this_script_file_name + " ended. **************" +
       toolbox.reset_color)
