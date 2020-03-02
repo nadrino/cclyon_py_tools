@@ -13,7 +13,7 @@ for arg_id in range(len(sys.argv)):
     if sys.argv[arg_id] == "--debug" or sys.argv[arg_id] == "-debug":
         debug_mode = True
 
-print(toolbox_lib.warning + "Looking for failed root files in ./")
+print(toolbox_lib.warning + "Looking for junk root files in ./*.root")
 root_files_list = toolbox_lib.ls("./*.root")
 
 for root_filepath in root_files_list:
