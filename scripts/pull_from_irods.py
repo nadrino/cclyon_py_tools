@@ -47,7 +47,7 @@ for pull_folder in parameters_dict["pull_folders"]:
         continue
 
     printout = subprocess.run(['ils'], stdout=subprocess.PIPE)
-    print(printout.stdout.decode('utf-8'))
+    print(printout.stdout.decode('utf-8').split('\n'))
 
 
 
