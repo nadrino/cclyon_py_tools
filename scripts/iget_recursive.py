@@ -22,7 +22,7 @@ if os.getenv("JOBS_DIR") is None:
 
 if len(sys.argv) == 1:
     print(toolbox.warning + "--dry-run : Make all the process but don't start the run.")
-    print(toolbox.warning + "Example of usage : pull_from_irods.py /QMULZone1/home/asg/asg2019oa/xseccovs")
+    print(toolbox.warning + "Example of usage : iget_recursive.py /QMULZone1/home/asg/asg2019oa/xseccovs")
     sys.exit(0)
 
 print(toolbox.red_color +
@@ -66,6 +66,8 @@ for pull_folder in parameters_dict["pull_folders"]:
 
         for element in ls_list:
             element = element[2:]
+            if element == "":
+                continue
             print(element)
             if "C-" in element:
                 current_dir = os.getcwd()
