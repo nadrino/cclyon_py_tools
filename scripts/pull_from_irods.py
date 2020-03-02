@@ -65,6 +65,8 @@ for pull_folder in parameters_dict["pull_folders"]:
         print(ls_list)
 
         for element in ls_list:
+            element = element[2:]
+            print(element)
             if "C-" in element:
                 current_dir = os.getcwd()
                 recurse_head_folder = pull_folder.split('/')[-1]
