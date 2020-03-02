@@ -13,6 +13,7 @@ this_script_file_name = os.path.basename(__file__)
 current_working_directory = os.getcwd()
 now_time_string = toolbox.get_now_time_string()
 
+do_overwrite = False
 parameters_dict["pull_folders"] = list()
 
 
@@ -34,6 +35,9 @@ for arg_id in range(len(sys.argv)):
     if sys.argv[arg_id] == "--dry-run":
         is_dry_run = True
         print(toolbox.warning + "Dry run enabled.")
+    elif sys.argv[arg_id] == "-f":
+        do_overwrite = True
+        print(toolbox.warning + "Overwrite mode enabled.")
     else:
         if arg_id >= 1:
             parameters_dict["pull_folders"].append(sys.argv[arg_id])
@@ -79,6 +83,13 @@ for pull_folder in parameters_dict["pull_folders"]:
                 os.chdir(current_dir)
             else:
                 print(toolbox.info + "Downloading " + element)
+                if os.path.exists(element):
+                    if not do_overwrite:
+                        print(toolbox.error + element + " already exists (it may have already been downloaded).")
+                        print(toolbox.error + "Add '-f' option to allow overwrite.")
+                        continue
+                    else:
+                        os.system("rm " + element)
                 subprocess.run(['iget', element, "./"], stdout=subprocess.PIPE)
 
         return
