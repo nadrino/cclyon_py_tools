@@ -69,15 +69,15 @@ for pull_folder in parameters_dict["pull_folders"]:
             print(element)
             if "C-" in element:
                 current_dir = os.getcwd()
-                recurse_head_folder = pull_folder.split('/')[-1]
-                print(toolbox.info + "Entering " + download_path_)
+                recurse_head_folder = element.split('/')[-1]
+                print(toolbox.info + "Entering " + element)
                 toolbox.mkdir(recurse_head_folder)
                 os.chdir(current_working_directory + "/" + recurse_head_folder)
                 recursive_download(element)
                 os.chdir(current_dir)
             else:
-                print(toolbox.info + "Downloading " + download_path_)
-                subprocess.run(['iget', download_path_, "./"], stdout=subprocess.PIPE)
+                print(toolbox.info + "Downloading " + element)
+                subprocess.run(['iget', element, "./"], stdout=subprocess.PIPE)
 
         return
 
