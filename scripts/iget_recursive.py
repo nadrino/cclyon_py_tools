@@ -85,8 +85,8 @@ for pull_folder in parameters_dict["pull_folders"]:
                 print(toolbox.info + "Downloading " + element)
                 if os.path.exists(element):
                     if not do_overwrite:
-                        print(toolbox.error + element + " already exists (it may have already been downloaded).")
-                        print(toolbox.error + "Add '-f' option to allow overwrite.")
+                        print(toolbox.warning + element + " already exists (it may have already been downloaded).")
+                        print(toolbox.warning + "Add '-f' option to allow overwrite.")
                         continue
                     else:
                         os.system("rm " + element)
