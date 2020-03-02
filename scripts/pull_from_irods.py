@@ -62,6 +62,7 @@ for pull_folder in parameters_dict["pull_folders"]:
 
         printout = subprocess.run(['ils'], stdout=subprocess.PIPE)
         ls_list = printout.stdout.decode('utf-8').split('\n')[1:]
+        print(ls_list)
 
         for element in ls_list:
             if "C-" in element:
