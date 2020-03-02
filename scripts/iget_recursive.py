@@ -66,13 +66,11 @@ for pull_folder in parameters_dict["pull_folders"]:
 
         printout = subprocess.run(['ils'], stdout=subprocess.PIPE)
         ls_list = printout.stdout.decode('utf-8').split('\n')[1:]
-        print(ls_list)
 
         for element in ls_list:
             element = element[2:]
             if element == "":
                 continue
-            print(element)
             if "C-" in element:
                 current_dir = os.getcwd()
                 recurse_head_folder = element.split('/')[-1]
