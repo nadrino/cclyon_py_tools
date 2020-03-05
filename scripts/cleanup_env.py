@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import os
-import subprocess
+import sys
 
 env_list = list()
-env_list.append("PATH")
-env_list.append("LD_LIBRARY_PATH")
+
+for arg_id in range(len(sys.argv)):
+
+    if arg_id >= 1:
+        env_list.append(sys.argv[arg_id])
 
 for env in env_list:
 
