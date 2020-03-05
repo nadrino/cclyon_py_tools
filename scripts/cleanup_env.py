@@ -28,9 +28,9 @@ for env in env_list:
                 cleaned_up_folder_list.append(sub_folder)
         new_path_element = "/" + "/".join(cleaned_up_folder_list)
         if new_path_element not in cleaned_up_path_folders:
-            cleaned_up_path_folders.append(new_path_element)
+            cleaned_up_path_folders.append('"' + new_path_element + '"')
 
     new_path = ":".join(cleaned_up_path_folders)
-    print("export " + env + '="' + new_path + '"')
+    print("export " + env + '=' + new_path)
 
 
