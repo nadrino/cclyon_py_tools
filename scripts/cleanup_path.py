@@ -25,6 +25,7 @@ for env in env_list:
         if new_path_element not in cleaned_up_path_folders:
             cleaned_up_path_folders.append(new_path_element)
 
+    sorted(cleaned_up_path_folders)
     new_path = ":".join(cleaned_up_path_folders)
     print("export " + env + "=\"" + new_path + "\"")
     # os.system("export " + env + "=\"" + new_path + "\"")
