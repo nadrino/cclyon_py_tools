@@ -29,6 +29,6 @@ for env in env_list:
             cleaned_up_path_folders.append(new_path_element)
 
     new_path = ":".join(cleaned_up_path_folders)
-    print("export " + env + "=\"" + new_path + "\"")
+    print("export " + env + "=\"" + new_path + "\";")
 
 
