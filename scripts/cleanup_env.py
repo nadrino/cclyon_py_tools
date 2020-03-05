@@ -20,8 +20,8 @@ for env in env_list:
     for folder in path_folders:
         if folder[0] != '/':
             continue
-        if "\"" in folder:
-            folder = "".join(folder.split("\""))
+        if '"' in folder:
+            folder = "".join(folder.split('"'))
         sub_folder_list = folder.split("/")
         cleaned_up_folder_list = list()
         for sub_folder in sub_folder_list:
