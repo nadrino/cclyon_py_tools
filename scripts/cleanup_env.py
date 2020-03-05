@@ -14,14 +14,13 @@ for arg_id in range(len(sys.argv)):
 for env in env_list:
 
     path = os.getenv(env)
+    path.replace('"')
     path_folders = path.split(":")
 
     cleaned_up_path_folders = list()
     for folder in path_folders:
         if folder[0] != '/':
             continue
-        if '"' in folder:
-            folder = "".join(folder.split('"'))
         sub_folder_list = folder.split("/")
         cleaned_up_folder_list = list()
         for sub_folder in sub_folder_list:
