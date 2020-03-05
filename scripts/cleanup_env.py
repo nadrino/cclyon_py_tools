@@ -14,7 +14,7 @@ for arg_id in range(len(sys.argv)):
 for env in env_list:
 
     path = os.getenv(env)
-    path.replace('"')
+    path = path.replace('"', "")
     path_folders = path.split(":")
 
     cleaned_up_path_folders = list()
