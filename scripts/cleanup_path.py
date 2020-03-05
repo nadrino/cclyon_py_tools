@@ -29,6 +29,7 @@ for env in env_list:
     new_path = ":".join(cleaned_up_path_folders)
     # print("export " + env + "=\"" + new_path + "\"")
     # os.system("export " + env + "=\"" + new_path + "\"")
-    subprocess.run(["export", env + "=\"" + new_path + "\""])
+    # subprocess.run(["export", env + "=\"" + new_path + "\""])
+    os.environ[env] = new_path
 
 
