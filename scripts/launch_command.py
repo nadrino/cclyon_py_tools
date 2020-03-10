@@ -30,6 +30,8 @@ for arg_id in range(len(sys.argv)):
         debug = True
     elif sys.argv[arg_id] == "-interactive":
         mode = "interactive"
+    elif sys.argv[arg_id] == "-mc":
+        parmeters_dict["multithread-support"] = True
     else:
         if arg_id >= 1: # Skipping "launch_command.py"
             command_arg_list.append(sys.argv[arg_id])
@@ -41,6 +43,7 @@ for arg_id in range(len(sys.argv)):
 if len(sys.argv) == 1:
     print(toolbox.warning + "-interactive : Launch script in prompt")
     print(toolbox.warning + "-debug : verbose-only mode")
+    print(toolbox.warning + "-mc : Enable multicore")
     print(toolbox.warning + "Example of usage : launch_command.py Erec_Tuning -it 13 -z-sampling-mode 5-Positions -MC-SVN r1777")
     sys.exit()
 
