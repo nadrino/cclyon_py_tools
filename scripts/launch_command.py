@@ -82,8 +82,6 @@ toolbox_lib.mkdir(log_folder)
 #> Preparing launch script
 lauch_script_string =  "#!/bin/bash\n"
 lauch_script_string += "\n"
-lauch_script_string += "echo source " + STEREO_OUTPUT + "/Setup/scripts/stereo_setup.sh\n"
-lauch_script_string += "source " + STEREO_OUTPUT + "/Setup/scripts/stereo_setup.sh\n"
 lauch_script_string += "echo setup_root\n"
 lauch_script_string += "setup_root\n"
 lauch_script_string += "echo setup_geant\n"
