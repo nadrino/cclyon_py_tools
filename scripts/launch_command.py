@@ -19,6 +19,7 @@ parmeters_dict["multithread-support"] = False
 parmeters_dict["cpu_time"] = "47:59:59"
 debug = False
 mode = "job"
+queue = "mc_long"
 command_arg_list = list()
 
 queues_info = toolbox.get_queues_info()
@@ -40,14 +41,14 @@ for arg_id in range(len(sys.argv)):
     elif sys.argv[arg_id] == "-mc":
         parmeters_dict["multithread-support"] = True
     elif sys.argv[arg_id] == "-q":
-        parmeters_dict["queue"] = sys.argv[arg_id+1]
-        if parmeters_dict["queue"] not in queues_info:
-            print(toolbox.error + "Unknown queue : " + parmeters_dict["queue"])
+        queue = sys.argv[arg_id+1]
+        if queue not in queues_info:
+            print(toolbox.error + "Unknown queue : " + queue)
             exit(1)
         else:
-            print(toolbox.info + "Selected queue = " + parmeters_dict["queue"])
-            for queue_info in queues_info[parmeters_dict["queue"]]:
-                print(toolbox.info + "  - " + queue_info + " : " + queues_info[parmeters_dict["queue"]][queue_info])
+            print(toolbox.info + "Selected queue = " + queue)
+            for queue_info in queues_info[queue]:
+                print(toolbox.info + "  - " + queue_info + " : " + queues_info[queue][queue_info])
         skip_next = True
     else:
         if arg_id >= 1: # Skipping "launch_command.py"
@@ -119,6 +120,15 @@ launch_file.write(lauch_script_string)  # python will convert \n to os.linesep
 launch_file.close()  # you can omit in most cases as the destructor will call it
 print(toolbox.green_color + "Launch script writen as : " + toolbox.reset_color + script_reservoir_folder + "/Script_" + outfiles_base_name + ".sh")
 
+resources_declaration = list()
+resources_declaration.append("xrootd=1")
+resources_declaration.append("mysql=1")
+resources_declaration.append("sps=1")
+resources_declaration.append("hpss=1")
+resources_declaration.append("ct=" + queues_info[queue]["max_cpu_time"])
+resources_declaration.append("vmem=" + queues_info[queue]["max_virtual"])
+resources_declaration.append("fsize=" + queues_info[queue]["max_file_size"])
+
 #> Preparing job script
 job_command_arg_list = list()
 job_command_arg_list.append("qsub")
@@ -127,8 +137,10 @@ job_command_arg_list.append("-o " + log_folder + "/log_full_" + outfiles_base_na
 job_command_arg_list.append("-e " + log_folder + "/log_full_" + outfiles_base_name + ".err")
 job_command_arg_list.append("-P P_t2k")
 if parmeters_dict["multithread-support"]:
-    job_command_arg_list.append("-pe multicores 8 -q mc_long")
-job_command_arg_list.append("-l xrootd=1,mysql=1,sps=1,hpss=1,ct=" + parmeters_dict["cpu_time"] + ",vmem=4G,fsize=20G")
+    job_command_arg_list.append("-pe multicores 8")
+job_command_arg_list.append("-q " + queue)
+# job_command_arg_list.append("-l xrootd=1,mysql=1,sps=1,hpss=1,ct=" + parmeters_dict["cpu_time"] + ",vmem=4G,fsize=20G")
+job_command_arg_list.append("-l " + ",".join(resources_declaration))
 job_command_arg_list.append("-j y")
 job_command_arg_list.append(script_reservoir_folder + "/Script_" + outfiles_base_name + ".sh")
 
