@@ -37,8 +37,12 @@ for arg_id in range(len(sys.argv)):
     elif sys.argv[arg_id] == "-q":
         parmeters_dict["queue"] = sys.argv[arg_id+1]
         if parmeters_dict["queue"] not in queues_info:
-            print("Unknown queue : " + parmeters_dict["queue"])
+            print(toolbox.error + "Unknown queue : " + parmeters_dict["queue"])
             exit(1)
+        else:
+            print(toolbox.info + "Selected queue = " + parmeters_dict["queue"])
+            for queue_info in queues_info[parmeters_dict["queue"]]:
+                print(toolbox.info + "  - " + queue_info)
         arg_id += 1
     else:
         if arg_id >= 1: # Skipping "launch_command.py"
