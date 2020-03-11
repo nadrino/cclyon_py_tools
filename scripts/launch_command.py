@@ -39,6 +39,7 @@ for arg_id in range(len(sys.argv)):
         if parmeters_dict["queue"] not in queues_info:
             print("Unknown queue : " + parmeters_dict["queue"])
             exit(1)
+        arg_id += 1
     else:
         if arg_id >= 1: # Skipping "launch_command.py"
             command_arg_list.append(sys.argv[arg_id])
