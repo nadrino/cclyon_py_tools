@@ -116,7 +116,7 @@ job_command_arg_list.append("-e " + log_folder + "/log_full_" + outfiles_base_na
 job_command_arg_list.append("-P P_t2k")
 if parmeters_dict["multithread-support"]:
     job_command_arg_list.append("-pe multicores 8 -q mc_long")
-job_command_arg_list.append("-l xrootd=1,mysql=1,sps=1,hpss=1,dcache=1,ct=" + parmeters_dict["cpu_time"] + ",vmem=4G,fsize=20G")
+job_command_arg_list.append("-l xrootd=1,mysql=1,sps=1,hpss=1,ct=" + parmeters_dict["cpu_time"] + ",vmem=4G,fsize=20G")
 job_command_arg_list.append("-j y")
 job_command_arg_list.append(script_reservoir_folder + "/Script_" + outfiles_base_name + ".sh")
 
