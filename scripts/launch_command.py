@@ -44,6 +44,8 @@ for arg_id in range(len(sys.argv)):
         queue = sys.argv[arg_id+1]
         if queue not in queues_info:
             print(toolbox.error + "Unknown queue : " + queue)
+            for queue_name in queues_info:
+                print(toolbox.error + "  - " + queue_name)
             exit(1)
         else:
             print(toolbox.info + "Selected queue = " + queue)
