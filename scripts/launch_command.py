@@ -84,12 +84,6 @@ toolbox.mkdir(script_reservoir_folder)
 #> Preparing launch script
 lauch_script_string =  "#!/bin/bash\n"
 lauch_script_string += "\n"
-lauch_script_string += "echo setup_root\n"
-lauch_script_string += "setup_root\n"
-lauch_script_string += "echo setup_geant\n"
-lauch_script_string += "setup_geant\n"
-lauch_script_string += "echo setup_stereo\n"
-lauch_script_string += "setup_stereo\n"
 lauch_script_string += "echo cd " + execution_folder + "\n"
 lauch_script_string += "cd " + execution_folder + "\n"
 lauch_script_string += "\n"
