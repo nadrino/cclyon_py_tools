@@ -26,7 +26,12 @@ queues_info = toolbox.get_queues_info()
 
 print(toolbox.red_color + "************** Launch command starts **************" + toolbox.reset_color)
 
+skip_next = False
 for arg_id in range(len(sys.argv)):
+
+    if skip_next:
+        skip_next = False
+        continue
 
     if sys.argv[arg_id] == "-debug":
         debug = True
@@ -42,8 +47,8 @@ for arg_id in range(len(sys.argv)):
         else:
             print(toolbox.info + "Selected queue = " + parmeters_dict["queue"])
             for queue_info in queues_info[parmeters_dict["queue"]]:
-                print(toolbox.info + "  - " + queue_info)
-        arg_id += 1
+                print(toolbox.info + "  - " + queue_info + " : " + queues_info[parmeters_dict["queue"]][queue_info])
+        skip_next = True
     else:
         if arg_id >= 1: # Skipping "launch_command.py"
             command_arg_list.append(sys.argv[arg_id])
