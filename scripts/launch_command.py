@@ -21,6 +21,8 @@ debug = False
 mode = "job"
 command_arg_list = list()
 
+queues_info = toolbox.get_queues_info()
+
 
 print(toolbox.red_color + "************** Launch command starts **************" + toolbox.reset_color)
 
@@ -32,6 +34,11 @@ for arg_id in range(len(sys.argv)):
         mode = "interactive"
     elif sys.argv[arg_id] == "-mc":
         parmeters_dict["multithread-support"] = True
+    elif sys.argv[arg_id] == "-q":
+        parmeters_dict["queue"] = sys.argv[arg_id+1]
+        if parmeters_dict["queue"] not in queues_info:
+            print("Unknown queue : " + parmeters_dict["queue"])
+            exit(1)
     else:
         if arg_id >= 1: # Skipping "launch_command.py"
             command_arg_list.append(sys.argv[arg_id])
@@ -44,6 +51,7 @@ if len(sys.argv) == 1:
     print(toolbox.warning + "-interactive : Launch script in prompt")
     print(toolbox.warning + "-debug : verbose-only mode")
     print(toolbox.warning + "-mc : Enable multicore")
+    print(toolbox.warning + "-q <name_of_the_queue> : Set specific queue")
     print(toolbox.warning + "Example of usage : launch_command.py Erec_Tuning -it 13 -z-sampling-mode 5-Positions -MC-SVN r1777")
     sys.exit()
 
