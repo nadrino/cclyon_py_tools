@@ -20,9 +20,11 @@ parmeters_dict["cpu_time"] = "47:59:59"
 debug = False
 mode = "job"
 queue = "default"
+here = False
 command_arg_list = list()
 
 queues_info = toolbox.get_queues_info()
+execution_folder = ""
 
 
 print(toolbox.red_color + "************** Launch command starts **************" + toolbox.reset_color)
@@ -38,6 +40,9 @@ for arg_id in range(len(sys.argv)):
         debug = True
     elif sys.argv[arg_id] == "-interactive":
         mode = "interactive"
+    elif sys.argv[arg_id] == "-h":
+        here = True
+        execution_folder = os.getcwd()
     elif sys.argv[arg_id] == "-mc":
         parmeters_dict["multithread-support"] = True
         queue = "mc_long"
@@ -65,6 +70,7 @@ if len(sys.argv) == 1 or len(command_arg_list) == 0:
     print(toolbox.warning + "-interactive : Launch script in prompt")
     print(toolbox.warning + "-debug : verbose-only mode")
     print(toolbox.warning + "-mc : Enable multicore")
+    print(toolbox.warning + "-h : Execute the command here, from the current directory")
     print(toolbox.warning + "-q <name_of_the_queue> : Set specific queue")
     print(toolbox.warning + "Example of usage : launch_command.py -mc Erec_Tuning -it 13 -z-sampling-mode 5-Positions -MC-SVN r1777")
     sys.exit()
@@ -94,13 +100,15 @@ if len(outfiles_base_name) > 200: outfiles_base_name = outfiles_base_name[0:200]
 print(toolbox.gold_color + "Outfiles base name : " + toolbox.reset_color + outfiles_base_name)
 
 this_python_script_path = os.path.dirname(os.path.realpath(__file__))
-execution_folder = RESULTS_DIR + "/" + script_names
 log_folder = JOBS_DIR + "/logs/" + command_arg_list[0] + "/"
 script_reservoir_folder = JOBS_DIR + "/scripts/" + command_arg_list[0] + "/"
 
-toolbox.mkdir(execution_folder)
 toolbox.mkdir(log_folder)
 toolbox.mkdir(script_reservoir_folder)
+
+if not here:
+    execution_folder = RESULTS_DIR + "/" + script_names
+    toolbox.mkdir(execution_folder)
 
 
 #> Preparing launch script
