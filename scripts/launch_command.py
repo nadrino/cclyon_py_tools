@@ -19,7 +19,7 @@ parmeters_dict["multithread-support"] = False
 parmeters_dict["cpu_time"] = "47:59:59"
 debug = False
 mode = "job"
-queue = "mc_long"
+queue = "default"
 command_arg_list = list()
 
 queues_info = toolbox.get_queues_info()
@@ -40,6 +40,7 @@ for arg_id in range(len(sys.argv)):
         mode = "interactive"
     elif sys.argv[arg_id] == "-mc":
         parmeters_dict["multithread-support"] = True
+        queue = "mc_long"
     elif sys.argv[arg_id] == "-q":
         queue = sys.argv[arg_id+1]
         if queue not in queues_info:
@@ -140,7 +141,7 @@ job_command_arg_list.append("-e " + log_folder + "/log_full_" + outfiles_base_na
 job_command_arg_list.append("-P P_t2k")
 if parmeters_dict["multithread-support"]:
     job_command_arg_list.append("-pe multicores 8")
-job_command_arg_list.append("-q " + queue)
+    job_command_arg_list.append("-q " + queue)
 # job_command_arg_list.append("-l xrootd=1,mysql=1,sps=1,hpss=1,ct=" + parmeters_dict["cpu_time"] + ",vmem=4G,fsize=20G")
 job_command_arg_list.append("-l " + ",".join(resources_declaration))
 job_command_arg_list.append("-j y")
