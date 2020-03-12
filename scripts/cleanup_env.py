@@ -19,7 +19,7 @@ for env in env_list:
 
     cleaned_up_path_folders = list()
     for folder in path_folders:
-        if folder[0] != '/':
+        if len(folder) == 0 or folder[0] != '/':
             continue
         sub_folder_list = folder.split("/")
         cleaned_up_folder_list = list()
