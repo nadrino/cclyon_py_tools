@@ -4,6 +4,7 @@
 import sys
 import cclyon_toolbox_lib as toolbox_lib
 import os
+from tqdm import tqdm
 
 debug_mode = False
 
@@ -16,7 +17,7 @@ for arg_id in range(len(sys.argv)):
 print(toolbox_lib.warning + "Looking for junk root files in ./*.root")
 root_files_list = toolbox_lib.ls("./*.root")
 
-for root_filepath in root_files_list:
+for root_filepath in tqdm(root_files_list):
     if not toolbox_lib.do_tfile_is_clean(root_filepath):
         print('rm ' + root_filepath)
         if not debug_mode:
