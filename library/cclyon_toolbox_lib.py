@@ -207,6 +207,11 @@ def sort_list_human(list_):
 def get_quadratic_sum(val1_, val2_):
     from math import sqrt
     return sqrt(val1_ * val1_ + val2_ * val2_)
+def get_key_from_value_in_dict(dict_, value_):
+    for key, value in dict_:
+        if value == value_:
+            return key
+    return None
 
 # ROOT related tools
 def do_tfile_is_clean(input_tfile_path_, object_name_list_required_presence_=list(), look_for_valid_histograms_ = False):
