@@ -21,7 +21,7 @@ histogram_names_list.append("nu_e_bar")
 histograms_dict = dict()
 
 
-print(toolbox.info, "Opening input data file : ", spectrum_file_path)
+print(toolbox.info, "Opening input data file :", spectrum_file_path)
 with open(spectrum_file_path, 'r') as spectrum_file:
 
     lines = spectrum_file.readlines()
@@ -62,7 +62,7 @@ with open(spectrum_file_path, 'r') as spectrum_file:
     cos_z_lower_bin_edges_array = array('d', cos_z_lower_bin_edges)
     energy_lower_bin_edges_array = array('d', energy_lower_bin_edges)
 
-    print(toolbox.info + "Output file will be writen at ", output_file_path)
+    print(toolbox.info + "Output file will be writen at", output_file_path)
     output_tfile = TFile.Open(output_file_path, "RECREATE")
     for histogram_name in histogram_names_list:
         histograms_dict[histogram_name] = TH2D(histogram_name, histogram_name,
