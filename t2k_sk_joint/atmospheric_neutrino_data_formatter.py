@@ -4,7 +4,7 @@
 from array import array
 from ROOT import TH2D
 from ROOT import TFile
-from library import cclyon_toolbox_lib as toolbox
+import cclyon_toolbox_lib as toolbox
 
 spectrum_file_path = "./data/kam-ally-20-01-mtn-solmin.d.gz" # with mountain + average on phi
 output_file_path = "../output/atmospheric_neutrino_spectra.root"
@@ -56,8 +56,8 @@ with open(spectrum_file_path, 'r') as spectrum_file:
 
     cos_z_lower_bin_edges = sorted(cos_z_lower_bin_edges)
 
-    print(energy_lower_bin_edges)
-    print(cos_z_lower_bin_edges)
+    # print(energy_lower_bin_edges)
+    # print(cos_z_lower_bin_edges)
 
     cos_z_lower_bin_edges_array = array('d', cos_z_lower_bin_edges)
     energy_lower_bin_edges_array = array('d', energy_lower_bin_edges)
