@@ -4,17 +4,20 @@
 import time
 import numpy
 import math
+from tqdm import tqdm
 from array import array
 from ROOT import gRandom
 from ROOT import TFile
 from ROOT import TNtupleD
 from ROOT import TH2D
+from ROOT import TF1
 from ctypes import *
 import cclyon_toolbox_lib as toolbox
 
 parameters = dict()
 parameters["nb_events"] = 10000
 parameters["PRNG_seed"] = int(time.time())
+parameters["nb_track_steps"] = 100
 parameters["neutrino_spectra_file"] = "../output/atmospheric_neutrino_spectra.root"
 parameters["PREM_file"] = "../output/PREM.root"
 parameters["output_file"] = "../output/generated_neutrinos.root"
@@ -46,6 +49,7 @@ for neutrino_name in neutrino_names_list:
 
 print(toolbox.warning, "Opening file containing PREM function :", parameters["PREM_file"])
 PREM_file = TFile.Open(parameters["PREM_file"], "READ")
+PREM_TF1 = TF1(PREM_file.Get("PREM_TF1"))
 
 gRandom.SetSeed(parameters["PRNG_seed"]) # set the generator seed for TH2D.GetRandom2
 
@@ -65,12 +69,16 @@ variables_names_list.append("phi")               # sampled
 
 variables_names_list.append("SK_solid_angle_at_emission")    # computed
 
+variables_names_list.append("averaged_matter_density")    # computed
+
 nb_saved_variables = len(variables_names_list)
 
 # unsaved variables (useful vars to compute others but not tracked)
 variables_names_list.append("delta_R_SK")
+variables_names_list.append("R_SK_step")
+variables_names_list.append("R_Earth_step")
 
-
+# all variables are stored in this event container array. This will prevent python to reallocate doubles at each loop
 event_container = array("d", numpy.zeros((len(variables_names_list),), dtype=float))
 
 print(toolbox.info, "Output file will be writen in", parameters["output_file"])
@@ -81,9 +89,9 @@ output_ntuple = TNtupleD("neutrino_tracks", "neutrino_tracks", (":".join(variabl
 event_container[variables_names_list.index("R_Earth_emitted")] = parameters["earth_radius"] + parameters["neutrino_altitude"]
 energy = c_double()
 c_theta = c_double()
-for i_event in range(parameters["nb_events"]):
 
-    toolbox.display_loading(i_event, parameters["nb_events"], toolbox.warning + "Generating neutrino tracks...")
+print(toolbox.info, "Generating neutrino tracks...")
+for i_event in tqdm(range(parameters["nb_events"])):
 
     # sampling neutrino type, then sample energy / cos_theta
     random_number = gRandom.Rndm()*neutrino_global_normalisation
@@ -112,6 +120,22 @@ for i_event in range(parameters["nb_events"]):
     event_container[variables_names_list.index("cos_theta_Earth")] /= event_container[variables_names_list.index("R_Earth_emitted")]
 
     event_container[variables_names_list.index("SK_solid_angle_at_emission")] = parameters["SK_area"]/(event_container[variables_names_list.index("R_SK_emitted")]**2)
+
+    event_container[variables_names_list.index("averaged_matter_density")] = 0.
+    for i_step in range(parameters["nb_track_steps"]):
+        event_container[variables_names_list.index("R_SK_step")] = event_container[variables_names_list.index("R_SK_emitted")]
+        event_container[variables_names_list.index("R_SK_step")] -= i_step*event_container[variables_names_list.index("R_SK_emitted")]/parameters["nb_track_steps"]
+
+        event_container[variables_names_list.index("R_Earth_step")] = event_container[variables_names_list.index("R_SK_step")]**2
+        event_container[variables_names_list.index("R_Earth_step")] += parameters["earth_radius"]**2
+        event_container[variables_names_list.index("R_Earth_step")] += 2*parameters["earth_radius"]*\
+                                                                       event_container[variables_names_list.index("R_SK_step")]*\
+                                                                       event_container[variables_names_list.index("cos_theta_SK")]
+        event_container[variables_names_list.index("R_Earth_step")] = math.sqrt(event_container[variables_names_list.index("R_Earth_step")])
+
+        event_container[variables_names_list.index("averaged_matter_density")] += PREM_TF1.Eval(event_container[variables_names_list.index("R_Earth_step")])
+
+    event_container[variables_names_list.index("averaged_matter_density")] /= parameters["nb_track_steps"]
 
     output_ntuple.Fill(event_container[0:nb_saved_variables])
 
