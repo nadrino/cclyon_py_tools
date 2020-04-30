@@ -21,11 +21,11 @@ debug = False
 mode = "job"
 queue = "default"
 here = True # always true -> for now
-execution_folder = os.getcwd()
 command_arg_list = list()
 
 queues_info = toolbox.get_queues_info()
 execution_folder = ""
+execution_folder = os.getcwd()
 
 
 print(toolbox.red_color + "************** Launch command starts **************" + toolbox.reset_color)
