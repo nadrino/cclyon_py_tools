@@ -20,7 +20,7 @@ parmeters_dict["cpu_time"] = "47:59:59"
 debug = False
 mode = "job"
 queue = "default"
-here = False
+here = True # always true -> for now
 command_arg_list = list()
 
 queues_info = toolbox.get_queues_info()
@@ -40,9 +40,9 @@ for arg_id in range(len(sys.argv)):
         debug = True
     elif sys.argv[arg_id] == "-interactive":
         mode = "interactive"
-    elif sys.argv[arg_id] == "-h":
-        here = True
-        execution_folder = os.getcwd()
+    # elif sys.argv[arg_id] == "-h":
+    #     here = True
+    #     execution_folder = os.getcwd()
     elif sys.argv[arg_id] == "-mc":
         parmeters_dict["multithread-support"] = True
         queue = "mc_long"

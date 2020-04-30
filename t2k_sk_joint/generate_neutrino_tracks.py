@@ -15,9 +15,9 @@ from ctypes import *
 import cclyon_toolbox_lib as toolbox
 
 parameters = dict()
-parameters["nb_events"] = 10000
+parameters["nb_events"] = 100000
 parameters["PRNG_seed"] = int(time.time())
-parameters["nb_track_steps"] = 100
+parameters["nb_track_steps"] = 50
 parameters["neutrino_spectra_file"] = "../output/atmospheric_neutrino_spectra.root"
 parameters["PREM_file"] = "../output/PREM.root"
 parameters["output_file"] = "../output/generated_neutrinos.root"
