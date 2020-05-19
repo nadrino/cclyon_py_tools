@@ -24,6 +24,8 @@ _verbosity_level_ = 0
 
 last_displayed_value = -1
 
+nb_threads = 4
+
 last_time = 0
 delta_times_buffer = list()
 
@@ -70,6 +72,15 @@ def display_loading(current_val=100, end_val=100, title='Percent:', bar_length=2
     if percent == 100 or current_val == end_val-1:
         cclyon_toolbox_lib.last_displayed_value = -1
         print("")
+def multithread_processing(function_, processing_list_):
+
+    from tqdm import tqdm
+    from multiprocessing.dummy import Pool as ThreadPool
+
+    with ThreadPool(processes=nb_threads) as pool:
+        with tqdm(total=len(processing_list_)) as progress_bar:
+            for i, _ in enumerate(pool.imap_unordered(function_, processing_list_)):
+                progress_bar.update()
 
 # Booleans related tools
 def do_env_variable_is_defined(env_variable_):

@@ -26,16 +26,16 @@ parameters["neutrino_altitude"] = 15 # in km
 parameters["SK_area"] = 0.040*0.040 # in km^2 -> 40m x 40m
 
 neutrino_names_list = list()
-neutrino_names_list.append("nu_mu")
-neutrino_names_list.append("nu_mu_bar")
-neutrino_names_list.append("nu_e")
-neutrino_names_list.append("nu_e_bar")
+neutrino_names_list.append("numu")
+neutrino_names_list.append("numubar")
+neutrino_names_list.append("nue")
+neutrino_names_list.append("nuebar")
 
 neutrinos_PDG_codes = dict()
-neutrinos_PDG_codes["nu_mu"] = 14
-neutrinos_PDG_codes["nu_mu_bar"] = -14
-neutrinos_PDG_codes["nu_e"] = 12
-neutrinos_PDG_codes["nu_e_bar"] = -12
+neutrinos_PDG_codes["numu"] = 14
+neutrinos_PDG_codes["numubar"] = -14
+neutrinos_PDG_codes["nue"] = 12
+neutrinos_PDG_codes["nuebar"] = -12
 
 print(toolbox.warning, "Opening file containing atmospheric neutrino spectra :", parameters["neutrino_spectra_file"])
 neutrino_spectra_file = TFile.Open(parameters["neutrino_spectra_file"], "READ")
