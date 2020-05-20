@@ -1,6 +1,7 @@
 # Untracked files:
-./idea/*
-./output/*
-*/__pycache__/*
+.idea
+output
+.DS_Store
+__pycache__
 */.DS_Store
 hs_err_pid*.log
