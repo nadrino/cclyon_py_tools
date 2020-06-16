@@ -30,7 +30,19 @@ print("Extra arguments : " + str(extra_args))
 
 os.system("qstat " + " ".join(extra_args) + " -xml > ${HOME}/qstat.xml")
 HOME = os.getenv("HOME")
-xml_tree = ET.parse(HOME + "/qstat.xml")
+
+file_path = HOME + "/qstat.xml"
+if not os.path.isfile(file_path):
+    print(toolbox.error + file_path + " has not been found.")
+    exit(1)
+
+xml_tree = None
+try:
+    xml_tree = ET.parse(file_path)
+except ET.ParseError:
+    print(toolbox.error + file_path + " could not be parsed.")
+    exit(1)
+
 xml_root = xml_tree.getroot()
 
 

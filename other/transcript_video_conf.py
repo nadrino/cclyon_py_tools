@@ -12,12 +12,13 @@ import cclyon_toolbox_lib as toolbox
 from tqdm import tqdm
 import threading
 
-file_path = "/Users/ablanche/Movies/OBS/2020-05-15 14-17-03.mkv"
+file_path = "/Users/ablanche/Movies/OBS/2020-06-02 09-07-47.mkv"
+# file_path = "/Users/ablanche/Movies/OBS/2020-05-15 14-17-03.mkv"
 # file_path = "/Users/ablanche/Movies/OBS/2020-05-19 15-33-33.mkv"
 # file_path = "/Users/ablanche/Movies/OBS/2020-05-19 16-34-04.mkv"
 audio_chanel = "0:1"
-# speech_language = "fr-FR"
-speech_language= "en-US"
+speech_language = "fr-FR"
+# speech_language= "en-US"
 
 # split_by_option = "silences"
 split_by_option = "duration"
