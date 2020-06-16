@@ -37,14 +37,13 @@ if not os.path.isfile(file_path):
     exit(1)
 
 xml_tree = None
-xml_root = None
+from xml.etree.ElementTree import ParseError
 try:
     xml_tree = ET.parse(file_path)
-    xml_root = xml_tree.getroot()
-except:
+except ParseError:
     print(toolbox.error + file_path + " could not be parsed.")
     exit(1)
-
+xml_root = xml_tree.getroot()
 
 red_color = ""
 reset_color = ""
@@ -78,12 +77,14 @@ for child in xml_root:
     if child.tag == 'queue_info':
         for selected_job in child.findall('job_list'):
             if header:
-                header_string = gold_color + "Job-id" + (len(selected_job.find('JB_job_number').text) - len("Job-id"))*' ' + "  |  "
-                header_string += "Started at time" + (len(selected_job.find('JAT_start_time').text) - len("Started at time"))*' ' + "  |  "
-                header_string += "State" + (len(selected_job.find('state').text) - len("State"))*' ' + "  |  "
-                header_string += "Slots" + (len(selected_job.find('slots').text) - len("Slots"))*' ' + "  |  "
+                header_string = gold_color + "Job-id" + (
+                        len(selected_job.find('JB_job_number').text) - len("Job-id")) * ' ' + "  |  "
+                header_string += "Started at time" + (
+                        len(selected_job.find('JAT_start_time').text) - len("Started at time")) * ' ' + "  |  "
+                header_string += "State" + (len(selected_job.find('state').text) - len("State")) * ' ' + "  |  "
+                header_string += "Slots" + (len(selected_job.find('slots').text) - len("Slots")) * ' ' + "  |  "
                 header_string += "Script" + reset_color
-                separation_bar = gold_color + terminal_width*'-' + reset_color
+                separation_bar = gold_color + terminal_width * '-' + reset_color
                 print(separation_bar)
                 print(header_string)
                 print(separation_bar)
@@ -91,11 +92,15 @@ for child in xml_root:
             # nb_job_submited += 1
             # nb_job_running += 1
             color = green_color
-            entry_string = color + selected_job.find('JB_job_number').text + (len("Job-id") - len(selected_job.find('JB_job_number').text))*' ' + "  |  "
-            entry_string += selected_job.find('JAT_start_time').text + (len("Started at time") - len(selected_job.find('JAT_start_time').text))*' ' + "  |  "
-            entry_string += selected_job.find('state').text + (len("State") - len(selected_job.find('state').text))*' ' + "  |  "
-            entry_string += selected_job.find('slots').text + (len("Slots") - len(selected_job.find('slots').text))*' ' + "  |  "
-            nb_char_remaining = terminal_width - (len(entry_string)-len(color))
+            entry_string = color + selected_job.find('JB_job_number').text + (
+                    len("Job-id") - len(selected_job.find('JB_job_number').text)) * ' ' + "  |  "
+            entry_string += selected_job.find('JAT_start_time').text + (
+                    len("Started at time") - len(selected_job.find('JAT_start_time').text)) * ' ' + "  |  "
+            entry_string += selected_job.find('state').text + (
+                    len("State") - len(selected_job.find('state').text)) * ' ' + "  |  "
+            entry_string += selected_job.find('slots').text + (
+                    len("Slots") - len(selected_job.find('slots').text)) * ' ' + "  |  "
+            nb_char_remaining = terminal_width - (len(entry_string) - len(color))
             if not full_script_names and nb_char_remaining < len(selected_job.find('JB_name').text):
                 entry_string += selected_job.find('JB_name').text[0:nb_char_remaining] + reset_color
             else:
@@ -108,11 +113,12 @@ for child in xml_root:
     if child.tag == 'job_info':
         for selected_job in child.findall('job_list'):
             if header:
-                header_string = gold_color + "Job-id" + (len(selected_job.find('JB_job_number').text) - len("Job-id"))*' ' + "  |  "
-                header_string += "State" + (len(selected_job.find('state').text) - len("State"))*' ' + "  |  "
-                header_string += "Slots" + (len(selected_job.find('slots').text) - len("Slots"))*' ' + "  |  "
+                header_string = gold_color + "Job-id" + (
+                        len(selected_job.find('JB_job_number').text) - len("Job-id")) * ' ' + "  |  "
+                header_string += "State" + (len(selected_job.find('state').text) - len("State")) * ' ' + "  |  "
+                header_string += "Slots" + (len(selected_job.find('slots').text) - len("Slots")) * ' ' + "  |  "
                 header_string += "Script" + reset_color
-                separation_bar = gold_color + terminal_width*'-' + reset_color
+                separation_bar = gold_color + terminal_width * '-' + reset_color
                 print(separation_bar)
                 print(header_string)
                 print(separation_bar)
@@ -120,10 +126,13 @@ for child in xml_root:
             # nb_job_submited += 1
             # nb_job_pending += 1
             color = gold_color
-            entry_string = color + selected_job.find('JB_job_number').text + (len("Job-id") - len(selected_job.find('JB_job_number').text))*' ' + "  |  "
-            entry_string += selected_job.find('state').text + (len("State") - len(selected_job.find('state').text))*' ' + "  |  "
-            entry_string += selected_job.find('slots').text + (len("Slots") - len(selected_job.find('slots').text))*' ' + "  |  "
-            nb_char_remaining = terminal_width - (len(entry_string)-len(color))
+            entry_string = color + selected_job.find('JB_job_number').text + (
+                    len("Job-id") - len(selected_job.find('JB_job_number').text)) * ' ' + "  |  "
+            entry_string += selected_job.find('state').text + (
+                    len("State") - len(selected_job.find('state').text)) * ' ' + "  |  "
+            entry_string += selected_job.find('slots').text + (
+                    len("Slots") - len(selected_job.find('slots').text)) * ' ' + "  |  "
+            nb_char_remaining = terminal_width - (len(entry_string) - len(color))
             if not full_script_names and nb_char_remaining < len(selected_job.find('JB_name').text):
                 entry_string += selected_job.find('JB_name').text[0:nb_char_remaining] + reset_color
             else:
