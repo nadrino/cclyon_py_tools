@@ -37,13 +37,13 @@ if not os.path.isfile(file_path):
     exit(1)
 
 xml_tree = None
+xml_root = None
 try:
     xml_tree = ET.parse(file_path)
+    xml_root = xml_tree.getroot()
 except:
     print(toolbox.error + file_path + " could not be parsed.")
     exit(1)
-
-xml_root = xml_tree.getroot()
 
 
 red_color = ""
