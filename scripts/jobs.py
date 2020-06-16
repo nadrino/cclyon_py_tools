@@ -37,11 +37,9 @@ if not os.path.isfile(file_path):
     exit(1)
 
 xml_tree = None
-from xml.etree.ElementTree import ParseError
 try:
-    parser = ET.XMLParser(recover=True)
-    xml_tree = ET.parse(file_path, parser=parser)
-except ParseError:
+    xml_tree = ET.parse(file_path)
+except ET.ParseError:
     print(toolbox.error + file_path + " could not be parsed.")
     exit(1)
 xml_root = xml_tree.getroot()
