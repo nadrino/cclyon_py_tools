@@ -39,7 +39,7 @@ if not os.path.isfile(file_path):
 xml_tree = None
 try:
     xml_tree = ET.parse(file_path)
-except ET.ParseError:
+except:
     print(toolbox.error + file_path + " could not be parsed.")
     exit(1)
 
