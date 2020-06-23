@@ -150,6 +150,8 @@ resources_declaration.append("fsize=" + queues_info[queue]["max_file_size"])
 #> Preparing job script
 job_command_arg_list = list()
 job_command_arg_list.append("qsub")
+if queue != "default":
+    job_command_arg_list.append("-q " + queue)
 job_command_arg_list.append("-l os=" + toolbox.get_current_os())
 job_command_arg_list.append("-o " + log_folder + "/log_full_" + outfiles_base_name + ".log")
 job_command_arg_list.append("-e " + log_folder + "/log_full_" + outfiles_base_name + ".err")
@@ -159,8 +161,6 @@ if parmeters_dict["multithread-support"]:
 else:
     if nb_slots != -1:
         job_command_arg_list.append("-pe multicores " + str(nb_slots))
-if queue != "default":
-    job_command_arg_list.append("-q " + queue)
 # job_command_arg_list.append("-l xrootd=1,mysql=1,sps=1,hpss=1,ct=" + parmeters_dict["cpu_time"] + ",vmem=4G,fsize=20G")
 job_command_arg_list.append("-l " + ",".join(resources_declaration))
 job_command_arg_list.append("-j y")
