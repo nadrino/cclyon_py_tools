@@ -26,6 +26,7 @@ command_arg_list = list()
 queues_info = toolbox.get_queues_info()
 execution_folder = ""
 execution_folder = os.getcwd()
+nb_slots = -1
 
 
 print(toolbox.red_color + "************** Launch command starts **************" + toolbox.reset_color)
@@ -47,6 +48,9 @@ for arg_id in range(len(sys.argv)):
     elif sys.argv[arg_id] == "-mc":
         parmeters_dict["multithread-support"] = True
         queue = "mc_long"
+    elif sys.argv[arg_id] == "-c":
+        nb_slots = int(sys.argv[arg_id+1])
+        skip_next = True
     elif sys.argv[arg_id] == "-q":
         queue = sys.argv[arg_id+1]
         if queue not in queues_info:
@@ -152,6 +156,10 @@ job_command_arg_list.append("-e " + log_folder + "/log_full_" + outfiles_base_na
 job_command_arg_list.append("-P P_t2k")
 if parmeters_dict["multithread-support"]:
     job_command_arg_list.append("-pe multicores 8")
+else:
+    if nb_slots != -1:
+        job_command_arg_list.append("-pe multicores " + str(nb_slots))
+if queue != "default":
     job_command_arg_list.append("-q " + queue)
 # job_command_arg_list.append("-l xrootd=1,mysql=1,sps=1,hpss=1,ct=" + parmeters_dict["cpu_time"] + ",vmem=4G,fsize=20G")
 job_command_arg_list.append("-l " + ",".join(resources_declaration))
