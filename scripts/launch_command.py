@@ -70,9 +70,10 @@ for arg_id in range(len(sys.argv)):
 if len(sys.argv) == 1 or len(command_arg_list) == 0:
     print(toolbox.warning + "-interactive : Launch script in prompt")
     print(toolbox.warning + "-debug : verbose-only mode")
-    print(toolbox.warning + "-mc : Enable multicore")
+    print(toolbox.warning + "-mc : Multicore preset (8cores + mc_long queue)")
     print(toolbox.warning + "-h : Execute the command here, from the current directory")
     print(toolbox.warning + "-q <name_of_the_queue> : Set specific queue")
+    print(toolbox.warning + "-c <number_of_cores> : Specify the number of slots")
     print(toolbox.warning + "Example of usage : launch_command.py -mc Erec_Tuning -it 13 -z-sampling-mode 5-Positions -MC-SVN r1777")
     sys.exit()
 

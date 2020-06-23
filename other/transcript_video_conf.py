@@ -12,7 +12,8 @@ import cclyon_toolbox_lib as toolbox
 from tqdm import tqdm
 import threading
 
-file_path = "/Users/ablanche/Movies/OBS/2020-06-02 09-07-47.mkv"
+# file_path = "/Users/ablanche/Movies/OBS/2020-06-02 09-07-47.mkv"
+file_path = "\"/Users/ablanche/Movies/Franck_Lepage_Incultures_1.mp4\""
 # file_path = "/Users/ablanche/Movies/OBS/2020-05-15 14-17-03.mkv"
 # file_path = "/Users/ablanche/Movies/OBS/2020-05-19 15-33-33.mkv"
 # file_path = "/Users/ablanche/Movies/OBS/2020-05-19 16-34-04.mkv"
@@ -22,13 +23,13 @@ speech_language = "fr-FR"
 
 # split_by_option = "silences"
 split_by_option = "duration"
-# chunk_length_ms = 15000  # pydub calculates in millisec
-chunk_length_ms = 20000  # pydub calculates in millisec
+chunk_length_ms = 15000  # pydub calculates in millisec
+# chunk_length_ms = 20000  # pydub calculates in millisec
 
 sr_algo = "google"
 # sr_algo = "sphinx"
 
-toolbox.nb_threads = 16
+toolbox.nb_threads = 8
 
 # Define a function to normalize a chunk to a target amplitude.
 def match_target_amplitude(aChunk, target_dBFS):
@@ -41,7 +42,7 @@ file_name = file_path.split("/")[-1].split(".")[0]
 file_name = "_".join(file_name.split(" "))
 
 # Export all of the individual chunks as wav files
-output_folder = "./" + file_name + "_" + speech_language + "_" + split_by_option + "/"
+output_folder = os.getenv("TEMP_DIR") + "/transcript/" + file_name + "_" + speech_language + "_" + split_by_option + "/"
 chunks_subfolder = output_folder + "chunks/"
 toolbox.mkdir(chunks_subfolder)
 os.system("rm " + chunks_subfolder + "/*")
