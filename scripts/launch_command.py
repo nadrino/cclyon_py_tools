@@ -26,7 +26,7 @@ command_arg_list = list()
 queues_info = toolbox.get_queues_info()
 execution_folder = ""
 execution_folder = os.getcwd()
-nb_slots = -1
+nb_slots = 1
 
 
 print(toolbox.red_color + "************** Launch command starts **************" + toolbox.reset_color)
@@ -48,6 +48,8 @@ for arg_id in range(len(sys.argv)):
     elif sys.argv[arg_id] == "-mc":
         parmeters_dict["multithread-support"] = True
         queue = "mc_long"
+        if nb_slots != 1: # by default
+            nb_slots = 8
     elif sys.argv[arg_id] == "-c":
         nb_slots = int(sys.argv[arg_id+1])
         skip_next = True
@@ -139,13 +141,13 @@ launch_file.close()  # you can omit in most cases as the destructor will call it
 print(toolbox.green_color + "Launch script writen as : " + toolbox.reset_color + script_reservoir_folder + "/Script_" + outfiles_base_name + ".sh")
 
 resources_declaration = list()
-resources_declaration.append("xrootd=1")
-resources_declaration.append("mysql=1")
+# resources_declaration.append("xrootd=1")
+# resources_declaration.append("mysql=1")
 resources_declaration.append("sps=1")
-resources_declaration.append("hpss=1")
+# resources_declaration.append("hpss=1")
 resources_declaration.append("ct=" + queues_info[queue]["max_cpu_time"])
-resources_declaration.append("vmem=" + queues_info[queue]["max_virtual"])
-resources_declaration.append("fsize=" + queues_info[queue]["max_file_size"])
+# resources_declaration.append("vmem=" + queues_info[queue]["max_virtual"])
+# resources_declaration.append("fsize=" + queues_info[queue]["max_file_size"])
 
 #> Preparing job script
 job_command_arg_list = list()
@@ -156,10 +158,7 @@ job_command_arg_list.append("-l os=" + toolbox.get_current_os())
 job_command_arg_list.append("-o " + log_folder + "/log_full_" + outfiles_base_name + ".log")
 job_command_arg_list.append("-e " + log_folder + "/log_full_" + outfiles_base_name + ".err")
 job_command_arg_list.append("-P P_t2k")
-if parmeters_dict["multithread-support"]:
-    job_command_arg_list.append("-pe multicores 8")
-else:
-    if nb_slots != -1:
+if nb_slots != 1:
         job_command_arg_list.append("-pe multicores " + str(nb_slots))
 # job_command_arg_list.append("-l xrootd=1,mysql=1,sps=1,hpss=1,ct=" + parmeters_dict["cpu_time"] + ",vmem=4G,fsize=20G")
 job_command_arg_list.append("-l " + ",".join(resources_declaration))
