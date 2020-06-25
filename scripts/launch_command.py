@@ -31,40 +31,45 @@ nb_slots = 1
 
 print(toolbox.red_color + "************** Launch command starts **************" + toolbox.reset_color)
 
-skip_next = False
+skip_next = True # skip the first also
+reading_command = False
 for arg_id in range(len(sys.argv)):
 
     if skip_next:
         skip_next = False
         continue
 
-    if sys.argv[arg_id] == "-debug":
-        debug = True
-    elif sys.argv[arg_id] == "-interactive":
-        mode = "interactive"
-    # elif sys.argv[arg_id] == "-h":
-    #     here = True
-    #     execution_folder = os.getcwd()
-    elif sys.argv[arg_id] == "-mc":
-        parmeters_dict["multithread-support"] = True
-        queue = "mc_long"
-        if nb_slots != 1: # by default
-            nb_slots = 8
-    elif sys.argv[arg_id] == "-c":
-        nb_slots = int(sys.argv[arg_id+1])
-        skip_next = True
-    elif sys.argv[arg_id] == "-q":
-        queue = sys.argv[arg_id+1]
-        if queue not in queues_info:
-            print(toolbox.error + "Unknown queue : " + queue)
-            for queue_name in queues_info:
-                print(toolbox.error + "  - " + queue_name)
-            exit(1)
+    if not reading_command:
+        if sys.argv[arg_id] == "-debug":
+            debug = True
+        elif sys.argv[arg_id] == "-interactive":
+            mode = "interactive"
+        # elif sys.argv[arg_id] == "-h":
+        #     here = True
+        #     execution_folder = os.getcwd()
+        elif sys.argv[arg_id] == "-mc":
+            parmeters_dict["multithread-support"] = True
+            queue = "mc_long"
+            if nb_slots != 1: # by default
+                nb_slots = 8
+        elif sys.argv[arg_id] == "-c":
+            nb_slots = int(sys.argv[arg_id+1])
+            skip_next = True
+        elif sys.argv[arg_id] == "-q":
+            queue = sys.argv[arg_id+1]
+            if queue not in queues_info:
+                print(toolbox.error + "Unknown queue : " + queue)
+                for queue_name in queues_info:
+                    print(toolbox.error + "  - " + queue_name)
+                exit(1)
+            else:
+                print(toolbox.info + "Selected queue = " + queue)
+                for queue_info in queues_info[queue]:
+                    print(toolbox.info + "  - " + queue_info + " : " + queues_info[queue][queue_info])
+            skip_next = True
         else:
-            print(toolbox.info + "Selected queue = " + queue)
-            for queue_info in queues_info[queue]:
-                print(toolbox.info + "  - " + queue_info + " : " + queues_info[queue][queue_info])
-        skip_next = True
+            reading_command = True
+            arg_id -= 1 # go back to arg_id i nthe next loop
     else:
         if arg_id >= 1: # Skipping "launch_command.py"
             command_arg_list.append(sys.argv[arg_id])
@@ -74,13 +79,14 @@ for arg_id in range(len(sys.argv)):
 
 
 if len(sys.argv) == 1 or len(command_arg_list) == 0:
+    print(toolbox.warning + "The following option have to be put before the command")
     print(toolbox.warning + "-interactive : Launch script in prompt")
     print(toolbox.warning + "-debug : verbose-only mode")
     print(toolbox.warning + "-mc : Multicore preset (8cores + mc_long queue)")
     print(toolbox.warning + "-h : Execute the command here, from the current directory")
     print(toolbox.warning + "-q <name_of_the_queue> : Set specific queue")
     print(toolbox.warning + "-c <number_of_cores> : Specify the number of slots")
-    print(toolbox.warning + "Example of usage : launch_command.py -mc Erec_Tuning -it 13 -z-sampling-mode 5-Positions -MC-SVN r1777")
+    print(toolbox.warning + "Example of usage : launch_command.py -mc -c 2 Erec_Tuning -it 13 -z-sampling-mode 5-Positions -MC-SVN r1777")
     sys.exit()
 
 
