@@ -92,7 +92,7 @@ if len(sys.argv) == 1 or len(command_arg_list) == 0:
 
 #> Parsing parameters
 script_subfolder = "LaunchCommand"
-script_names = command_arg_list[0]
+script_names = command_arg_list[0].split("/")[-1]
 parmeters_dict["command"] = " ".join(command_arg_list)
 print(toolbox.green_color + "Launching Command : " + toolbox.reset_color + parmeters_dict["command"])
 print(toolbox.green_color + "Launching from : " + toolbox.reset_color + execution_folder)
