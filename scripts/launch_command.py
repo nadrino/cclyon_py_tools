@@ -35,8 +35,6 @@ skip_next = True # skip the first also
 reading_command = False
 for arg_id in range(len(sys.argv)):
 
-    print(sys.argv[arg_id])
-
     if skip_next:
         skip_next = False
         continue
@@ -73,11 +71,10 @@ for arg_id in range(len(sys.argv)):
             reading_command = True
             command_arg_list.append(sys.argv[arg_id])
     else:
-        if arg_id >= 1: # Skipping "launch_command.py"
-            command_arg_list.append(sys.argv[arg_id])
-            # this last option have to be in both the command and the python script
-            if sys.argv[arg_id] == "--multithread-support":
-                parmeters_dict["multithread-support"] = True
+        command_arg_list.append(sys.argv[arg_id])
+        # this last option have to be in both the command and the python script
+        if sys.argv[arg_id] == "--multithread-support":
+            parmeters_dict["multithread-support"] = True
 
 
 
