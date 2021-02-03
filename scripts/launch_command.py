@@ -50,10 +50,7 @@ for arg_id in range(len(sys.argv)):
         elif sys.argv[arg_id] == "-mc":
             parmeters_dict["multithread-support"] = True
             queue = "mc_long"
-            if nb_slots != 1: # by default
-                nb_slots = 8
-        elif sys.argv[arg_id] == "-c":
-            nb_slots = int(sys.argv[arg_id+1])
+            nb_slots = int(sys.argv[arg_id + 1])
             skip_next = True
         elif sys.argv[arg_id] == "-q":
             queue = sys.argv[arg_id+1]
