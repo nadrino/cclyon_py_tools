@@ -175,6 +175,7 @@ job_command_arg_list.append(script_reservoir_folder + "/Script_" + outfiles_base
 job_launch_command = " ".join(job_command_arg_list)
 
 print(toolbox.green_color + "Job command : " + toolbox.reset_color + job_launch_command)
+print(" > LOG PATH: " + log_folder + "/log_" + outfiles_base_name + ".log")
 
 #> Launching Job
 if not debug:
@@ -182,7 +183,6 @@ if not debug:
         print(toolbox.blue_color)
         os.system(job_launch_command)
         print(toolbox.reset_color)
-        print("LOG PATH: " + log_folder + "/log_" + outfiles_base_name + ".log")
     elif mode == "interactive":
         os.system(parmeters_dict["command"])
 
