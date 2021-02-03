@@ -92,7 +92,7 @@ if len(sys.argv) == 1 or len(command_arg_list) == 0:
 
 #> Parsing parameters
 script_subfolder = "LaunchCommand"
-script_names = command_arg_list[0].split("/")[-1]
+script_names = command_arg_list[0].split("/")[-1] # remove /bin/ etc...
 parmeters_dict["command"] = " ".join(command_arg_list)
 print(toolbox.green_color + "Launching Command : " + toolbox.reset_color + parmeters_dict["command"])
 print(toolbox.green_color + "Launching from : " + toolbox.reset_color + execution_folder)
@@ -182,6 +182,7 @@ if not debug:
         print(toolbox.blue_color)
         os.system(job_launch_command)
         print(toolbox.reset_color)
+        print("LOG PATH: " + log_folder + "/log_" + outfiles_base_name + ".log")
     elif mode == "interactive":
         os.system(parmeters_dict["command"])
 

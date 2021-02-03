@@ -12,9 +12,14 @@ import cclyon_toolbox_lib as toolbox
 from tqdm import tqdm
 import threading
 
+in_out_path = ["/Users/ablanche/Movies/2020-11-13 14-00-56.mp4", "JS_DUNE"]
+
+file_path = in_out_path[0]
+
 # file_path = "/Users/ablanche/Movies/OBS/2020-06-02 09-07-47.mkv"
-file_path = "\"/Users/ablanche/Movies/Franck_Lepage_Incultures_1.mp4\""
+# file_path = "\"/Users/ablanche/Movies/Franck_Lepage_Incultures_1.mp4\""
 # file_path = "/Users/ablanche/Movies/OBS/2020-05-15 14-17-03.mkv"
+# file_path = "/Users/ablanche/Movies/2020-11-13 14-00-56.mp4" #JS DUNE
 # file_path = "/Users/ablanche/Movies/OBS/2020-05-19 15-33-33.mkv"
 # file_path = "/Users/ablanche/Movies/OBS/2020-05-19 16-34-04.mkv"
 audio_chanel = "0:1"
@@ -42,7 +47,7 @@ file_name = file_path.split("/")[-1].split(".")[0]
 file_name = "_".join(file_name.split(" "))
 
 # Export all of the individual chunks as wav files
-output_folder = os.getenv("TEMP_DIR") + "/transcript/" + file_name + "_" + speech_language + "_" + split_by_option + "/"
+output_folder = os.getenv("TEMP_DIR") + "/transcript/" + in_out_path[1] + "_" + speech_language + "_" + split_by_option + "/"
 chunks_subfolder = output_folder + "chunks/"
 toolbox.mkdir(chunks_subfolder)
 os.system("rm " + chunks_subfolder + "/*")
