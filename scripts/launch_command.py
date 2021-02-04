@@ -172,7 +172,7 @@ job_command_arg_list.append(script_reservoir_folder + "/Script_" + outfiles_base
 job_launch_command = " ".join(job_command_arg_list)
 
 print(toolbox.green_color + "Job command : " + toolbox.reset_color + job_launch_command)
-print(toolbox.green_color + "Log path : " + toolbox.reset_color + + log_folder + "/log_" + outfiles_base_name + ".log")
+print(toolbox.green_color + "Log path : " + toolbox.reset_color + log_folder + "/log_" + outfiles_base_name + ".log")
 
 #> Launching Job
 if not debug:
