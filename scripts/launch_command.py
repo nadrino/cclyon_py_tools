@@ -7,7 +7,6 @@ from GenericToolbox import Colors as tColors
 
 import sys
 import os
-import time
 
 useSbatch = True
 

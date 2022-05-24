@@ -13,7 +13,7 @@ is_dry_run = False
 do_run_in_prompt = False
 this_script_file_name = os.path.basename(__file__)
 current_working_directory = os.getcwd()
-now_time_string = tIO.get_now_time_string()
+now_time_string = tIO.getNowTimeString()
 
 parameters_dict["bash_script"] = ""
 parameters_dict["multithread-support"] = False

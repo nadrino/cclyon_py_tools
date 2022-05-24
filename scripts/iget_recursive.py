@@ -31,9 +31,9 @@ if len(sys.argv) == 1:
     print(tColors.warning + "Example of usage : iget_recursive.py /QMULZone1/home/asg/asg2019oa/xseccovs")
     sys.exit(0)
 
-print(tColors.red_color +
+print(tColors.redColor +
       "************** " + this_script_file_name + " starts **************" +
-      tColors.reset_color)
+      tColors.resetColor)
 
 for arg_id in range(len(sys.argv)):
 
@@ -121,6 +121,6 @@ for pull_folder in parameters_dict["pull_folders"]:
     recursive_download(pull_folder)
 
 
-print(tColors.red_color +
+print(tColors.redColor +
       "************** " + this_script_file_name + " ended **************" +
-      tColors.reset_color)
+      tColors.resetColor)
