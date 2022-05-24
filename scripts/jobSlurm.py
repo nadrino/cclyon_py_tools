@@ -7,9 +7,9 @@ import time
 
 import GenericToolbox.IO as tIO
 import GenericToolbox.Colors as tColors
-from GenericToolbox.CmdLineReader import CommandLineReader
+from GenericToolbox.CmdLineReader import CmdLineReader
 
-cl = CommandLineReader()
+cl = CmdLineReader()
 
 cl.addOption("noColor", ["--no-color", "-no-color"], description_="Disable color display.", nbExpectedArgs_=0)
 cl.addOption("monitoringMode", ["--monitoring-mode"], description_="Enable monitoring mode.", nbExpectedArgs_=0)

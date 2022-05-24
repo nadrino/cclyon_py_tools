@@ -1,10 +1,10 @@
 import GenericToolbox.Colors as tColors
-from GenericToolbox.CmdLineReader import CommandLineReader
+from GenericToolbox.CmdLineReader import CmdLineReader
 
 nCores = 1
 cmdStr = ""
 
-cl = CommandLineReader()
+cl = CmdLineReader()
 
 
 cl.addOption("nCores", ["--nb-cores", "-n"], description_="How many cores requested to the grid.", nbExpectedArgs_=1)
