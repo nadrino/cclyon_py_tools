@@ -54,6 +54,7 @@ for job in data['jobs']:
     if job["job_state"] == "RUNNING":
         nRunning += 1
 
+
 print(red_color + "-> Number of remaining jobs : " + str(nRunning+nPending) + reset_color)
 print(red_color + "-> Number of running jobs : " + str(nRunning) + reset_color)
 print(red_color + "-> Number of pending jobs : " + str(nPending) + reset_color)
@@ -130,4 +131,4 @@ print(red_color + "-> Number of running jobs : " + str(nRunning) + reset_color)
 print(red_color + "-> Number of pending jobs : " + str(nPending) + reset_color)
 print("To see the full script names add the option : --full-script-names")
 
-
+os.system("rm "+filePath)
