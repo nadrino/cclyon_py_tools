@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import GenericToolbox.Colors as tColors
+
 import time
 import numpy
 import math
@@ -12,7 +14,6 @@ from ROOT import TNtupleD
 from ROOT import TH2D
 from ROOT import TF1
 from ctypes import *
-import cclyon_toolbox_lib as toolbox
 
 parameters = dict()
 parameters["nb_events"] = 100000
@@ -37,7 +38,7 @@ neutrinos_PDG_codes["numubar"] = -14
 neutrinos_PDG_codes["nue"] = 12
 neutrinos_PDG_codes["nuebar"] = -12
 
-print(toolbox.warning, "Opening file containing atmospheric neutrino spectra :", parameters["neutrino_spectra_file"])
+print(tColors.warning, "Opening file containing atmospheric neutrino spectra :", parameters["neutrino_spectra_file"])
 neutrino_spectra_file = TFile.Open(parameters["neutrino_spectra_file"], "READ")
 neutrino_spectra_dict = dict()
 neutrino_type_threshold = dict()
@@ -47,7 +48,7 @@ for neutrino_name in neutrino_names_list:
     neutrino_type_threshold[neutrino_name] = neutrino_global_normalisation + neutrino_spectra_dict[neutrino_name].GetSum()
     neutrino_global_normalisation += neutrino_spectra_dict[neutrino_name].GetSum()
 
-print(toolbox.warning, "Opening file containing PREM function :", parameters["PREM_file"])
+print(tColors.warning, "Opening file containing PREM function :", parameters["PREM_file"])
 PREM_file = TFile.Open(parameters["PREM_file"], "READ")
 PREM_TF1 = TF1(PREM_file.Get("PREM_TF1"))
 
@@ -81,7 +82,7 @@ variables_names_list.append("R_Earth_step")
 # all variables are stored in this event container array. This will prevent python to reallocate doubles at each loop
 event_container = array("d", numpy.zeros((len(variables_names_list),), dtype=float))
 
-print(toolbox.info, "Output file will be writen in", parameters["output_file"])
+print(tColors.info, "Output file will be writen in", parameters["output_file"])
 output_file = TFile.Open(parameters["output_file"], "RECREATE")
 output_file.cd()
 output_ntuple = TNtupleD("neutrino_tracks", "neutrino_tracks", (":".join(variables_names_list[0:nb_saved_variables])))
@@ -90,7 +91,7 @@ event_container[variables_names_list.index("R_Earth_emitted")] = parameters["ear
 energy = c_double()
 c_theta = c_double()
 
-print(toolbox.info, "Generating neutrino tracks...")
+print(tColors.info, "Generating neutrino tracks...")
 for i_event in tqdm(range(parameters["nb_events"])):
 
     # sampling neutrino type, then sample energy / cos_theta
@@ -144,6 +145,6 @@ output_file.cd()
 output_ntuple.GetTree().Write()
 output_file.Close()
 
-print(toolbox.info, "Output file writen in", parameters["output_file"])
-print(toolbox.info, "Process ended successfully.")
+print(tColors.info, "Output file writen in", parameters["output_file"])
+print(tColors.info, "Process ended successfully.")
 exit(0)

@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import GenericToolbox.Colors as tColors
+import GenericToolbox.IO as tIO
+
 import os
 import sys
 import xml.etree.ElementTree as ET
-import cclyon_toolbox_lib as toolbox
 
 nb_job_running = 0
 nb_job_submited = 0
@@ -33,14 +35,14 @@ HOME = os.getenv("HOME")
 
 file_path = HOME + "/qstat.xml"
 if not os.path.isfile(file_path):
-    print(toolbox.error + file_path + " has not been found.")
+    print(tColors.error + file_path + " has not been found.")
     exit(1)
 
 xml_tree = None
 try:
     xml_tree = ET.parse(file_path)
 except ET.ParseError:
-    print(toolbox.error + file_path + " could not be parsed.")
+    print(tColors.error + file_path + " could not be parsed.")
     exit(1)
 xml_root = xml_tree.getroot()
 
@@ -49,13 +51,13 @@ reset_color = ""
 gold_color = ""
 green_color = ""
 if use_color:
-    red_color = toolbox.red_color
-    reset_color = toolbox.reset_color
-    gold_color = toolbox.gold_color
-    green_color = toolbox.green_color
+    red_color = tColors.redColor
+    reset_color = tColors.resetColor
+    gold_color = tColors.goldColor
+    green_color = tColors.greenColor
 
-terminal_width = toolbox.getTerminalSize()[0]
-terminal_height = toolbox.getTerminalSize()[1]
+terminal_width = tIO.getTerminalSize()[0]
+terminal_height = tIO.getTerminalSize()[1]
 nb_lines = 3 + 4
 for child in xml_root:
     if child.tag == 'queue_info':

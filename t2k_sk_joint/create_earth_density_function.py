@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import GenericToolbox.Colors as tColors
+
 from ROOT import TFile
 from ROOT import TF1
-import cclyon_toolbox_lib as toolbox
+
 
 # Preliminary reference Earth model
 # https://www.sciencedirect.com/science/article/abs/pii/0031920181900467?via%3Dihub
@@ -11,10 +13,10 @@ import cclyon_toolbox_lib as toolbox
 earth_radius = 6371
 
 output_file_path = "../output/PREM.root"
-print(toolbox.info, "Output file will be writen as :", output_file_path)
+print(tColors.info, "Output file will be writen as :", output_file_path)
 output_tfile = TFile.Open(output_file_path, "RECREATE")
 
-print(toolbox.info, "Gathering PREM components parameters")
+print(tColors.info, "Gathering PREM components parameters")
 layer_label = list()
 layer_outer_bound = list()
 layer_polynomial_coefficients = list()
@@ -67,7 +69,7 @@ layer_label.append("Crust_2")
 layer_outer_bound.append(6368.0)
 layer_polynomial_coefficients.append([2.600])
 
-print(toolbox.warning, "Building Formulae...")
+print(tColors.warning, "Building Formulae...")
 functions_list = list()
 last_bound = 0.
 output_tfile.mkdir("Layers")
@@ -88,11 +90,11 @@ for i_layer in range(len(layer_label)):
     functions_list[-1].Write()
     last_bound = layer_outer_bound[i_layer]
 
-print(toolbox.warning, "Writing PREM function.")
+print(tColors.warning, "Writing PREM function.")
 output_tfile.cd("")
 PREM_function = TF1("PREM_TF1", " + ".join(layer_label), 0., layer_outer_bound[-1]+100.)
 PREM_function.Write()
 output_tfile.Close()
 
-print(toolbox.info, "Process ended successfully.")
+print(tColors.info, "Process ended successfully.")
 exit(0)

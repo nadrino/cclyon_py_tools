@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import cclyon_toolbox_lib as toolbox_lib
+import GenericToolbox.Colors as tColors
+import GenericToolbox.IO as tIO
+
 import sys
 import os
 
 parameters = dict()
 
 if len(sys.argv) < 3:
-    print(toolbox_lib.info + " *** Usage : *** ")
-    print(toolbox_lib.info + "rename_multiple_files <substring_to_search> <replacing_string>")
+    print(tColors.info + " *** Usage : *** ")
+    print(tColors.info + "rename_multiple_files <substring_to_search> <replacing_string>")
     exit(0)
 
 for arg_id in range(len(sys.argv)):
@@ -21,7 +23,7 @@ for arg_id in range(len(sys.argv)):
         parameters["replacing_string"] = sys.argv[arg_id]
 
 
-files_list = toolbox_lib.get_list_of_files_in_folder("./")
+files_list = tIO.get_list_of_files_in_folder("./")
 
 for file_name in files_list:
 

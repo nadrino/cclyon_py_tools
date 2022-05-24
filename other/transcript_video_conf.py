@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import GenericToolbox.Parallel as tParallel
+import GenericToolbox.IO as tIO
+import GenericToolbox.Colors as tColors
+
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 from pydub.utils import make_chunks
@@ -8,7 +12,6 @@ import os
 import speech_recognition as sr
 import time
 from threading import Thread
-import cclyon_toolbox_lib as toolbox
 from tqdm import tqdm
 import threading
 
@@ -34,7 +37,7 @@ chunk_length_ms = 15000  # pydub calculates in millisec
 sr_algo = "google"
 # sr_algo = "sphinx"
 
-toolbox.nb_threads = 8
+tParallel.nb_threads = 8
 
 # Define a function to normalize a chunk to a target amplitude.
 def match_target_amplitude(aChunk, target_dBFS):
@@ -49,7 +52,7 @@ file_name = "_".join(file_name.split(" "))
 # Export all of the individual chunks as wav files
 output_folder = os.getenv("TEMP_DIR") + "/transcript/" + in_out_path[1] + "_" + speech_language + "_" + split_by_option + "/"
 chunks_subfolder = output_folder + "chunks/"
-toolbox.mkdir(chunks_subfolder)
+tIO.mkdir(chunks_subfolder)
 os.system("rm " + chunks_subfolder + "/*")
 
 audio_file_path = output_folder + file_name + ".wav"
@@ -62,18 +65,17 @@ if not os.path.isfile(audio_file_path + ".mp3"):
     os.system("ffmpeg -i \"" + file_path + "\" -map " + audio_chanel + " -acodec pcm_s16le -ac 2 " + audio_file_path)
 
     full_length_audio_file = AudioSegment.from_file(audio_file_path, "wav")
-    print(toolbox.info, "Converting to mp3...")
+    print(tColors.info, "Converting to mp3...")
     full_length_audio_file.export(audio_file_path + ".mp3",bitrate="192k",format="mp3")
     os.system("rm " + audio_file_path)
 
 full_length_audio_file = AudioSegment.from_file(audio_file_path + ".mp3", "mp3")
 
-
-
+chunks = list()
 if split_by_option == "silences":
     # Split track where the silence is 2 seconds or more and get chunks using
     # the imported function.
-    print(toolbox.info, "Splitting audio file by silence moments...")
+    print(tColors.info, "Splitting audio file by silence moments...")
     chunks = split_on_silence (
         # Use the loaded audio.
         full_length_audio_file
@@ -140,7 +142,7 @@ html_footer_lines.append("</html>")
 html_footer = "\n".join(html_footer_lines)
 
 
-print(toolbox.info, "Reading chunks...")
+print(tColors.info, "Reading chunks...")
 html_body_lines = list()
 chunk_relative_path_list = list()
 
@@ -189,7 +191,7 @@ def process(i_file):
     except Exception as e:
         line_transcript = "Exception: " + str(e)
 
-    print(toolbox.info + line_transcript)
+    print(tColors.info + line_transcript)
 
     chunk_relative_path = chunk_file_name.replace("/".join(html_file_path.split("/")[0:-1]), ".")
     html_table_line = ""
@@ -223,6 +225,6 @@ def process(i_file):
 
     os.remove(chunk_file_name)
 
-toolbox.multithread_processing(process, range(len(chunks)))
+tParallel.runParallel(process, range(len(chunks)))
 
-print(toolbox.info, "html output :", html_file_path)
+print(tColors.info, "html output :", html_file_path)

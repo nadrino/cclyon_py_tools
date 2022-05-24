@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import cclyon_toolbox_lib
-import t2k_sk_joint_lib
 
 from array import array
 import numpy as np

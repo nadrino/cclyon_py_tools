@@ -54,13 +54,13 @@ def compute_propagation_length(cos_theta_SK_):
 
 prop_length_bin_edges = list()
 
-print(toolbox.info, "Opening input data file :", spectrum_file_path)
+print(tColors.info, "Opening input data file :", spectrum_file_path)
 with open(spectrum_file_path, 'r') as spectrum_file:
 
     lines = spectrum_file.readlines()
 
     # checking the binning
-    print(toolbox.warning, "Looking for the correct binning...")
+    print(tColors.warning, "Looking for the correct binning...")
     e_bin_has_been_filled = False
     for line in lines:
         # header check
@@ -101,7 +101,7 @@ with open(spectrum_file_path, 'r') as spectrum_file:
 
     print(prop_length_bin_edges_array)
 
-    print(toolbox.info + "Output file will be writen at", output_file_path)
+    print(tColors.info + "Output file will be writen at", output_file_path)
     output_tfile = TFile.Open(output_file_path, "RECREATE")
     for histogram_name in histogram_names_list:
         histograms_dict[histogram_name] = TH2D(histogram_name, histogram_name,
@@ -119,7 +119,7 @@ with open(spectrum_file_path, 'r') as spectrum_file:
 
 
     # now reading the data
-    print(toolbox.warning, "Now filling the histograms...")
+    print(tColors.warning, "Now filling the histograms...")
     current_cos_z = -2
     current_energy = -1
     for line in lines:
@@ -146,7 +146,7 @@ with open(spectrum_file_path, 'r') as spectrum_file:
                 # is header
                 pass
 
-    print(toolbox.warning, "Writing histograms in the output file...")
+    print(tColors.warning, "Writing histograms in the output file...")
     output_tfile.cd()
     for histogram_name in histogram_names_list:
         histograms_dict[histogram_name].Write()
@@ -193,7 +193,7 @@ with open(spectrum_file_path, 'r') as spectrum_file:
 
     output_tfile.Close()
 
-print(toolbox.info, "Process ended successfully.")
+print(tColors.info, "Process ended successfully.")
 exit(0)
 
 
