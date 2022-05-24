@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 import json
+import time
 
 import GenericToolbox.IO as tIO
 import GenericToolbox.Colors as tColors
@@ -65,7 +65,7 @@ for job in data['jobs']:
     if job["job_state"] == "PENDING": continue
     if header:
         header_string = gold_color + "Job-id" + (len(str(job["job_id"])) - len("Job-id")) * ' ' + "  |  "
-        header_string += "Started at time" + (len(str(job["submit_time"])) - len("Started at time")) * ' ' + "  |  "
+        header_string += "Started at time" + (len(str(time.ctime(job["start_time"]))) - len("Started at time")) * ' ' + "  |  "
         header_string += "State" + (len(str(job["job_state"])) - len("State")) * ' ' + "  |  "
         header_string += "Slots" + (len(str(job["cpus"])) - len("Slots")) * ' ' + "  |  "
         header_string += "Script" + reset_color
@@ -78,8 +78,8 @@ for job in data['jobs']:
     # nb_job_running += 1
     color = green_color
     entry_string = color + str(job["job_id"]) + (len("Job-id") - len(str(job["job_id"]))) * ' ' + "  |  "
-    entry_string += str(job["submit_time"]) + (
-            len("Started at time") - len(str(job["submit_time"]))) * ' ' + "  |  "
+    entry_string += str(time.ctime(job["start_time"])) + (
+            len("Started at time") - len(str(time.ctime(job["start_time"])))) * ' ' + "  |  "
     entry_string += str(job["job_state"]) + (
             len("State") - len(str(job["job_state"]))) * ' ' + "  |  "
     entry_string += str(job["cpus"]) + (
