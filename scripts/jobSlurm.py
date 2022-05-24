@@ -62,6 +62,7 @@ print("To see the full script names add the option : --full-script-names")
 header = True
 separation_bar = ''
 for job in data['jobs']:
+    if job["job_state"] == "PENDING": continue
     if header:
         header_string = gold_color + "Job-id" + (len(str(job["job_id"])) - len("Job-id")) * ' ' + "  |  "
         header_string += "Started at time" + (len(str(job["submit_time"])) - len("Started at time")) * ' ' + "  |  "
@@ -93,6 +94,7 @@ for job in data['jobs']:
         nbLines += 1
 header = True
 for job in data['jobs']:
+    if job["job_state"] == "RUNNING": continue
     if header:
         header_string = gold_color + "Job-id" + (
                 len(str(job["job_id"])) - len("Job-id")) * ' ' + "  |  "
