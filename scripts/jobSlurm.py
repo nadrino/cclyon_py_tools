@@ -126,7 +126,7 @@ for job in data['jobs']:
         nbLines += 1
 
 for job in data['jobs']:
-    if job["job_state"] != "PENDING" and job["job_state"] != "RUNNING": continue
+    if job["job_state"] != "PENDING" or job["job_state"] != "RUNNING": continue
     if header:
         header_string = red_color + "Job-id" + (
                 len(str(job["job_id"])) - len("Job-id")) * ' ' + "  |  "
