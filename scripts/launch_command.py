@@ -28,6 +28,7 @@ cl.keepTailArgs = True
 
 cl.printConfigSummary()
 cl.readCommandLineArgs()
+cl.printTriggerArgs()
 
 if len(cl.trailArgList) == 0:
     print(tColors.error + "No command specified to be launched")
