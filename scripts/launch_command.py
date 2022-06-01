@@ -16,6 +16,7 @@ JOBS_DIR = tIO.get_env_variable("JOBS_DIR")
 RESULTS_DIR = tIO.get_env_variable("RESULTS_DIR")
 
 executionFolder = os.getcwd()
+groupName = "t2k"
 
 print(tColors.redColor + "************** Launch command starts **************" + tColors.resetColor)
 
@@ -23,6 +24,7 @@ cl = CmdLineReader.CmdLineReader()
 cl.addOption("nCores", ["-mc"], description_="Trigger multi-core queue and specify nb threads/slots", nbExpectedArgs_=1)
 cl.addOption("debug", ["-debug"], description_="Trigger debug mode", nbExpectedArgs_=0)
 cl.addOption("interactive", ["-interactive"], description_="Launch the generated script in interactive mode", nbExpectedArgs_=0)
+cl.addOption("group", ["-g"], description_="Specify group", nbExpectedArgs_=1)
 
 cl.keepTailArgs = True
 
@@ -34,6 +36,8 @@ if len(cl.trailArgList) == 0:
     print(tColors.error + "No command specified to be launched")
     exit(1)
 
+if cl.isOptionTriggered("group"):
+    groupName = cl.getOptionValues("group")[0]
 
 # > Parsing parameters
 cmdToJob = " ".join(cl.trailArgList)
@@ -82,6 +86,7 @@ print(tColors.greenColor + "Launch script writen as : " + tColors.resetColor + s
 jobSubArgList = list()
 jobSubArgList.append("sbatch")
 jobSubArgList.append("-L sps")
+jobSubArgList.append("--account=" + groupName)
 if cl.isOptionTriggered("nCores"):
     jobSubArgList.append("-n " + str(cl.getOptionValues("nCores")[0]))
 jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
