@@ -37,8 +37,8 @@ if len(cl.trailArgList) == 0:
 
 # > Parsing parameters
 cmdToJob = " ".join(cl.trailArgList)
-print(tColors.greenColor + "Launching Command : " + tColors.resetColor + cmdToJob)
-print(tColors.greenColor + "Launching from : " + tColors.redColor + executionFolder)
+print(tColors.greenColor + "Running command : " + tColors.resetColor + cmdToJob)
+print(tColors.greenColor + "Running from : " + tColors.resetColor + executionFolder)
 
 # > Outfile names
 outFilesBaseName = tIO.getNowTimeString()
