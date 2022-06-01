@@ -81,8 +81,8 @@ print(tColors.greenColor + "Launch script writen as : " + tColors.resetColor + s
 jobSubArgList = list()
 jobSubArgList.append("sbatch")
 jobSubArgList.append("-L sps")
-if cl.isOptionTriggered("nbCores"):
-    jobSubArgList.append("-n " + str(cl.getOptionValues("nbCores")[0]))
+if cl.isOptionTriggered("nCores"):
+    jobSubArgList.append("-n " + str(cl.getOptionValues("nCores")[0]))
 jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
 jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
 jobSubArgList.append("--mail-user=ablanche@lpnhe.in2p3.fr")
