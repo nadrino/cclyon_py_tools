@@ -67,6 +67,7 @@ tIO.mkdir(scriptFolder)
 # > Preparing launch script
 cmdBashScript = "#!/bin/bash\n"
 cmdBashScript += "\n"
+cmdBashScript += "ulimit -c 0 # disable core dumps\n"
 cmdBashScript += "echo cd " + executionFolder + "\n"
 cmdBashScript += "cd " + executionFolder + "\n"
 cmdBashScript += "\n"
