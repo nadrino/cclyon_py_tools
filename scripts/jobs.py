@@ -72,6 +72,14 @@ print(red_color + "-> Number of remaining jobs : " + str(nb_job_submited) + rese
 print(red_color + "-> Number of running jobs : " + str(nb_job_running) + reset_color)
 print(red_color + "-> Number of pending jobs : " + str(nb_job_pending) + reset_color)
 print("To see the full script names add the option : --full-script-names")
+
+runningJobTable = dict()
+runningJobTable["Job-id"] = list()
+runningJobTable["Started at time"] = list()
+runningJobTable["State"] = list()
+runningJobTable["Slots"] = list()
+runningJobTable["Script name"] = list()
+
 header = True
 separation_bar = ''
 for child in xml_root:
@@ -93,6 +101,18 @@ for child in xml_root:
             # nb_job_submited += 1
             # nb_job_running += 1
             color = green_color
+
+            if "Job-id" in runningJobTable:
+                runningJobTable["Job-id"].append(selected_job.find('JB_job_number').text)
+            if "Started at time" in runningJobTable:
+                runningJobTable["Started at time"].append(selected_job.find('JAT_start_time').text)
+            if "State" in runningJobTable:
+                runningJobTable["State"].append(selected_job.find('state').text)
+            if "Slots" in runningJobTable:
+                runningJobTable["Slots"].append(selected_job.find('slots').text)
+            if "Script name" in runningJobTable:
+                runningJobTable["Script name"].append(selected_job.find('JB_name').text)
+
             entry_string = color + selected_job.find('JB_job_number').text + (
                     len("Job-id") - len(selected_job.find('JB_job_number').text)) * ' ' + "  |  "
             entry_string += selected_job.find('JAT_start_time').text + (
@@ -141,6 +161,51 @@ for child in xml_root:
             if not monitoring_mode or (nb_lines + 1 <= terminal_height):
                 print(entry_string)
                 nb_lines += 1
+
+
+def generateTableStr(dict_):
+    colWidthList = list()
+    colKeyList = list()
+
+    for title, values in dict_:
+        colWidthList.append(len(title))
+        colKeyList.append(title)
+        for value in values:
+            colWidthList[-1] = max(colWidthList[-1], len(value))
+
+    colWidthList[-1] = \
+        tIO.getTerminalSize()[0] \
+        - sum(colWidthList[:-1]) \
+        - 3 * (len(colWidthList) - 1) \
+        - 1
+
+    def getLine(separator_, contentList_=None):
+        if contentList_ is None: contentList_ = list()
+        out = ""
+
+        for iCol in range(len(colWidthList)):
+            if iCol != 0: out += " " + separator_ + " "
+            if contentList_ is None:
+                out += "─" * (colWidthList[iCol])
+            else:
+                out += contentList_[iCol].ljust(colWidthList[iCol], ' ')
+
+        return out
+
+    linesList = list()
+    linesList.append(getLine("┬"))
+    linesList.append(getLine("│", colKeyList))
+    linesList.append(getLine("┼"))
+
+    for key in colKeyList:
+        linesList.append(getLine("│", dict_[key]))
+
+    linesList.append(getLine("┴"))
+
+    return linesList
+
+
+print("\n".join(generateTableStr(runningJobTable)))
 
 print(separation_bar)
 print(red_color + "-> Number of remaining jobs : " + str(nb_job_submited) + reset_color)
