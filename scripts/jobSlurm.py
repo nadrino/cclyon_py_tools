@@ -151,7 +151,8 @@ def generateTableStr(dict_):
     linesList.append(getLine("┼"))
 
     for iJob in range(len(dict_.items())):
-        linesList.append( getLine( "│", list(dict_.values())[iJob]) )
+        print( list(dict_.values())[iJob] )
+        linesList.append( getLine( "│", list(dict_.values())[iJob] ) )
 
     linesList.append(getLine("┴"))
 
