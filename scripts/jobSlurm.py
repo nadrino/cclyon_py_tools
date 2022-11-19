@@ -131,8 +131,7 @@ def generateTableStr(dict_):
         - 1
 
     def getLine(separator_, contentList_=None):
-        if contentList_ is None: contentList_ = list()
-        out = ""
+        out = str()
 
         for iCol in range(len(colWidthList)):
             if iCol != 0: out += " " + separator_ + " "
