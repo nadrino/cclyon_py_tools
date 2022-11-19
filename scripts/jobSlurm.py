@@ -122,7 +122,7 @@ def generateTableStr(dict_):
         colWidthList.append(len(title))
         colKeyList.append(title)
         for value in values:
-            colWidthList[-1] = max(colWidthList[-1], len(value))
+            colWidthList[-1] = max(colWidthList[-1], len( str(value) ))
 
     colWidthList[-1] = \
         tIO.getTerminalSize()[0] \
