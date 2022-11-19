@@ -151,13 +151,13 @@ def generateTableStr(dict_):
     linesList.append(getLine("┼"))
 
     for key in colKeyList:
-        linesList.append(getLine("│", dict_[key]))
+        linesList.append(getLine("│", list(dict_.values())[key]))
 
     linesList.append(getLine("┴"))
 
     return linesList
 
-print("\n".join(generateTableStr(runningJobTable)))
+print("\n".join( generateTableStr(runningJobTable) ))
 
 
 header = True
