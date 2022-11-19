@@ -155,6 +155,7 @@ def generateTableStr(dict_):
 
     return linesList
 
+print( runningJobTable )
 print("\n".join(generateTableStr(runningJobTable)))
 
 
