@@ -45,7 +45,6 @@ nbLines = 3 + 4
 
 data = json.load(open(filePath, 'r'))
 
-
 nRunning = 0
 nPending = 0
 for job in data['jobs']:
@@ -54,15 +53,18 @@ for job in data['jobs']:
     if job["job_state"] == "RUNNING":
         nRunning += 1
 
+docString = list()
+docString.append(tColors.redColor + "-> Number of remaining jobs : " + str(nRunning + nPending) + tColors.resetColor)
+docString.append(tColors.redColor + "-> Number of running jobs : " + str(nRunning) + tColors.resetColor)
+docString.append(tColors.redColor + "-> Number of pending jobs : " + str(nPending) + tColors.resetColor)
+docString.append("To see the full script names add the option : --full-script-names")
 
-print(red_color + "-> Number of remaining jobs : " + str(nRunning+nPending) + reset_color)
-print(red_color + "-> Number of running jobs : " + str(nRunning) + reset_color)
-print(red_color + "-> Number of pending jobs : " + str(nPending) + reset_color)
-print("To see the full script names add the option : --full-script-names")
+jobDataMask = list()
+jobDataMask.append("Start time")
 
 runningJobTable = dict()
 runningJobTable["Job-id"] = list()
-runningJobTable["Started at time"] = list()
+runningJobTable["Start time"] = list()
 runningJobTable["State"] = list()
 runningJobTable["Slots"] = list()
 runningJobTable["Script name"] = list()
@@ -70,48 +72,13 @@ runningJobTable["Script name"] = list()
 header = True
 separation_bar = ''
 for job in data['jobs']:
-    if job["job_state"] != "RUNNING": continue
-    if header:
-        header_string = gold_color + "Job-id" + (len(str(job["job_id"])) - len("Job-id")) * ' ' + "  |  "
-        header_string += "Started at time" + (len(str(time.ctime(job["start_time"]))) - len("Started at time")) * ' ' + "  |  "
-        header_string += "State" + (len(str(job["job_state"])) - len("State")) * ' ' + "  |  "
-        header_string += "Slots" + (len(str(job["cpus"])) - len("Slots")) * ' ' + "  |  "
-        header_string += "Script" + reset_color
-        separation_bar = gold_color + terminal_width * '-' + reset_color
-        print(separation_bar)
-        print(header_string)
-        print(separation_bar)
-        header = False
-    # nb_job_submited += 1
-    # nb_job_running += 1
-
-    if "Job-id" in runningJobTable:
-        runningJobTable["Job-id"].append( job["job_id"] )
-    if "Started at time" in runningJobTable:
-        runningJobTable["Started at time"].append( job["start_time"] )
-    if "State" in runningJobTable:
-        runningJobTable["State"].append( job["job_state"] )
-    if "Slots" in runningJobTable:
-        runningJobTable["Slots"].append( job["cpus"] )
-    if "Script name" in runningJobTable:
-        runningJobTable["Script name"].append( job["name"] )
-
-    color = green_color
-    entry_string = color + str(job["job_id"]) + (len("Job-id") - len(str(job["job_id"]))) * ' ' + "  |  "
-    entry_string += str(time.ctime(job["start_time"])) + (
-            len("Started at time") - len(str(time.ctime(job["start_time"])))) * ' ' + "  |  "
-    entry_string += str(job["job_state"]) + (
-            len("State") - len(str(job["job_state"]))) * ' ' + "  |  "
-    entry_string += str(job["cpus"]) + (
-            len("Slots") - len(str(job["cpus"]))) * ' ' + "  |  "
-    nb_char_remaining = terminal_width - (len(entry_string) - len(color))
-    if not cl.isOptionTriggered("fullScriptNames") and nb_char_remaining < len(str(job["name"])):
-        entry_string += str(job["name"])[0:nb_char_remaining] + reset_color
-    else:
-        entry_string += str(job["name"]) + reset_color
-    if not cl.isOptionTriggered("monitoringMode") or (nbLines + 1 <= terminal_height):
-        print(entry_string)
-        nbLines += 1
+    runningJobTable["Job-id"].append(job["job_id"])
+    runningJobTable["State"].append(job["job_state"])
+    runningJobTable["Slots"].append(job["cpus"])
+    runningJobTable["Script name"].append(job["name"])
+    runningJobTable["Start time"].append("")
+    if runningJobTable["State"][-1] == "RUNNING":
+        runningJobTable["Start time"][-1] = str(time.ctime(job["start_time"]))
 
 
 def generateTableStr(dict_):
@@ -124,7 +91,7 @@ def generateTableStr(dict_):
         colKeyList.append(title)
         nEntries = len(values)
         for value in values:
-            colWidthList[-1] = max(colWidthList[-1], len( str(value) ))
+            colWidthList[-1] = max(colWidthList[-1], len(str(value)))
 
     colWidthList[-1] = \
         tIO.getTerminalSize()[0] \
@@ -156,87 +123,26 @@ def generateTableStr(dict_):
     linesList.append(getLine("┼"))
 
     for iJob in range(nEntries):
+        entryColor = None
+
         lineContent = list()
         for key, values in dict_.items():
-            lineContent.append( values[iJob] )
+            if key == "State":
+                if values[iJob] == "RUNNING":
+                    entryColor = tColors.greenColor
+                elif values[iJob] == "PENDING":
+                    entryColor = tColors.goldColor
+            lineContent.append(values[iJob])
 
-        print( lineContent )
-        linesList.append( getLine( separator_="│", contentList_=lineContent, color_=tColors.greenColor ) )
+        linesList.append(getLine("│", lineContent, entryColor))
 
     linesList.append(getLine("┴"))
 
     return linesList
 
-print("\n".join( generateTableStr(runningJobTable) ))
 
+print("\n".join(docString))
+print("\n".join(generateTableStr(runningJobTable)))
+print("\n".join(docString))
 
-header = True
-for job in data['jobs']:
-    if job["job_state"] != "PENDING": continue
-    if header:
-        header_string = gold_color + "Job-id" + (
-                len(str(job["job_id"])) - len("Job-id")) * ' ' + "  |  "
-        header_string += "State" + (len(str(job["job_state"])) - len("State")) * ' ' + "  |  "
-        header_string += "Slots" + (len(str(job["cpus"])) - len("Slots")) * ' ' + "  |  "
-        header_string += "Script" + reset_color
-        separation_bar = gold_color + terminal_width * '-' + reset_color
-        print(separation_bar)
-        print(header_string)
-        print(separation_bar)
-        header = False
-    # nb_job_submited += 1
-    # nb_job_pending += 1
-    color = gold_color
-    entry_string = color + str(job["job_id"]) + (
-            len("Job-id") - len(str(job["job_id"]))) * ' ' + "  |  "
-    entry_string += str(job["job_state"]) + (
-            len("State") - len(str(job["job_state"]))) * ' ' + "  |  "
-    entry_string += str(job["cpus"]) + (
-            len("Slots") - len(str(job["cpus"]))) * ' ' + "  |  "
-    nb_char_remaining = terminal_width - (len(entry_string) - len(color))
-    if not cl.isOptionTriggered("fullScriptNames") and nb_char_remaining < len(str(job["name"])):
-        entry_string += str(job["name"])[0:nb_char_remaining] + reset_color
-    else:
-        entry_string += str(job["name"]) + reset_color
-    if not cl.isOptionTriggered("monitoringMode") or (nbLines + 1 <= terminal_height):
-        print(entry_string)
-        nbLines += 1
-
-for job in data['jobs']:
-    if job["job_state"] != "PENDING" or job["job_state"] != "RUNNING": continue
-    if header:
-        header_string = red_color + "Job-id" + (
-                len(str(job["job_id"])) - len("Job-id")) * ' ' + "  |  "
-        header_string += "State" + (len(str(job["job_state"])) - len("State")) * ' ' + "  |  "
-        header_string += "Slots" + (len(str(job["cpus"])) - len("Slots")) * ' ' + "  |  "
-        header_string += "Script" + reset_color
-        separation_bar = red_color + terminal_width * '-' + reset_color
-        print(separation_bar)
-        print(header_string)
-        print(separation_bar)
-        header = False
-    # nb_job_submited += 1
-    # nb_job_pending += 1
-    color = red_color
-    entry_string = color + str(job["job_id"]) + (
-            len("Job-id") - len(str(job["job_id"]))) * ' ' + "  |  "
-    entry_string += str(job["job_state"]) + (
-            len("State") - len(str(job["job_state"]))) * ' ' + "  |  "
-    entry_string += str(job["cpus"]) + (
-            len("Slots") - len(str(job["cpus"]))) * ' ' + "  |  "
-    nb_char_remaining = terminal_width - (len(entry_string) - len(color))
-    if not cl.isOptionTriggered("fullScriptNames") and nb_char_remaining < len(str(job["name"])):
-        entry_string += str(job["name"])[0:nb_char_remaining] + reset_color
-    else:
-        entry_string += str(job["name"]) + reset_color
-    if not cl.isOptionTriggered("monitoringMode") or (nbLines + 1 <= terminal_height):
-        print(entry_string)
-        nbLines += 1
-
-print(separation_bar)
-print(red_color + "-> Number of remaining jobs : " + str(nRunning+nPending) + reset_color)
-print(red_color + "-> Number of running jobs : " + str(nRunning) + reset_color)
-print(red_color + "-> Number of pending jobs : " + str(nPending) + reset_color)
-print("To see the full script names add the option : --full-script-names")
-
-os.system("rm "+filePath)
+os.system("rm " + filePath)
