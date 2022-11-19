@@ -64,7 +64,7 @@ runningJobTable = dict()
 runningJobTable["Job-id"] = list()
 runningJobTable["Start time"] = list()
 runningJobTable["State"] = list()
-runningJobTable["Slots"] = list()
+runningJobTable["CPUs"] = list()
 runningJobTable["Script name"] = list()
 
 header = True
@@ -72,7 +72,7 @@ separation_bar = ''
 for job in data['jobs']:
     runningJobTable["Job-id"].append(job["job_id"])
     runningJobTable["State"].append(job["job_state"])
-    runningJobTable["Slots"].append(job["cpus"])
+    runningJobTable["CPUs"].append(job["cpus"])
     runningJobTable["Script name"].append(job["name"])
     runningJobTable["Start time"].append("")
     if runningJobTable["State"][-1] == "RUNNING":
@@ -112,7 +112,10 @@ def generateTableStr(dict_):
                     out += " " + separator_ + " "
                 if not color_ is None:
                     out += color_
-                out += str(contentList_[iCol]).ljust(colWidthList[iCol], ' ')[0:colWidthList[iCol]]
+                if cl.isOptionTriggered("fullScriptNames"):
+                    out += str(contentList_[iCol]).ljust(colWidthList[iCol], ' ')
+                else:
+                    out += str(contentList_[iCol]).ljust(colWidthList[iCol], ' ')[0:colWidthList[iCol]]
                 out += resetColor
 
         return out
