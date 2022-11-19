@@ -22,6 +22,17 @@ cl.readCommandLineArgs()
 if len(cl.trailArgList) != 0:
     print(tColors.warning + "Extra arguments : " + " ".join(cl.trailArgList))
 
+
+redColor = ""
+resetColor = ""
+goldColor = ""
+greenColor = ""
+if not cl.isOptionTriggered("noColor"):
+    redColor = tColors.redColor
+    resetColor = tColors.resetColor
+    goldColor = tColors.goldColor
+    greenColor = tColors.greenColor
+
 filePath = os.getenv("HOME") + "/squeue.json"
 os.system("squeue --json " + " ".join(cl.trailArgList) + " > " + filePath)
 
@@ -29,19 +40,6 @@ if not os.path.isfile(filePath):
     print(tColors.error + filePath + " has not been found.")
     exit(1)
 
-red_color = ""
-reset_color = ""
-gold_color = ""
-green_color = ""
-if not cl.isOptionTriggered("noColor"):
-    red_color = tColors.redColor
-    reset_color = tColors.resetColor
-    gold_color = tColors.goldColor
-    green_color = tColors.greenColor
-
-terminal_width = tIO.getTerminalSize()[0]
-terminal_height = tIO.getTerminalSize()[1]
-nbLines = 3 + 4
 
 data = json.load(open(filePath, 'r'))
 
@@ -54,9 +52,9 @@ for job in data['jobs']:
         nRunning += 1
 
 docString = list()
-docString.append(tColors.redColor + "-> Number of remaining jobs : " + str(nRunning + nPending) + tColors.resetColor)
-docString.append(tColors.redColor + "-> Number of running jobs : " + str(nRunning) + tColors.resetColor)
-docString.append(tColors.redColor + "-> Number of pending jobs : " + str(nPending) + tColors.resetColor)
+docString.append(redColor + "-> Number of remaining jobs : " + str(nRunning + nPending) + resetColor)
+docString.append(redColor + "-> Number of running jobs : " + str(nRunning) + resetColor)
+docString.append(redColor + "-> Number of pending jobs : " + str(nPending) + resetColor)
 docString.append("To see the full script names add the option : --full-script-names")
 
 jobDataMask = list()
@@ -113,7 +111,7 @@ def generateTableStr(dict_):
                 if not color_ is None:
                     out += color_
                 out += str(contentList_[iCol]).ljust(colWidthList[iCol], ' ')[0:colWidthList[iCol]]
-                out += tColors.resetColor
+                out += resetColor
 
         return out
 
@@ -129,9 +127,9 @@ def generateTableStr(dict_):
         for key, values in dict_.items():
             if key == "State":
                 if values[iJob] == "RUNNING":
-                    entryColor = tColors.greenColor
+                    entryColor = greenColor
                 elif values[iJob] == "PENDING":
-                    entryColor = tColors.goldColor
+                    entryColor = goldColor
             lineContent.append(values[iJob])
 
         linesList.append(getLine("│", lineContent, entryColor))
