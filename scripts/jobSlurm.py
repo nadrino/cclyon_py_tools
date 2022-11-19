@@ -118,7 +118,7 @@ def generateTableStr(dict_):
     colWidthList = list()
     colKeyList = list()
 
-    for title, values in dict_:
+    for title, values in dict_.items:
         colWidthList.append(len(title))
         colKeyList.append(title)
         for value in values:
