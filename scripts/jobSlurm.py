@@ -143,7 +143,8 @@ def generateTableStr(dict_):
             else:
                 if iCol != 0:
                     out += " " + separator_ + " "
-                out += str(contentList_[iCol]).ljust(colWidthList[iCol], ' ')
+                content = str(contentList_[iCol]).ljust(colWidthList[iCol], ' ')[0:colWidthList[iCol]]
+                out += content
 
         return out
 
