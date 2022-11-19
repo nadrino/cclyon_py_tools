@@ -117,10 +117,12 @@ for job in data['jobs']:
 def generateTableStr(dict_):
     colWidthList = list()
     colKeyList = list()
+    nEntries = 0
 
     for title, values in dict_.items():
         colWidthList.append(len(title))
         colKeyList.append(title)
+        nEntries = len(values)
         for value in values:
             colWidthList[-1] = max(colWidthList[-1], len( str(value) ))
 
@@ -150,7 +152,7 @@ def generateTableStr(dict_):
     linesList.append(getLine("│", colKeyList))
     linesList.append(getLine("┼"))
 
-    for iJob in range(len(dict_.items())):
+    for iJob in range(nEntries):
         lineContent = list()
         for key, values in dict_.items():
             lineContent.append( values[iJob] )
