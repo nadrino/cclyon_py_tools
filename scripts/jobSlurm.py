@@ -138,7 +138,7 @@ def generateTableStr(dict_):
             if contentList_ is None:
                 out += "─" * (colWidthList[iCol])
             else:
-                out += contentList_[iCol].ljust(colWidthList[iCol], ' ')
+                out += str(contentList_[iCol]).ljust(colWidthList[iCol], ' ')
 
         return out
 
