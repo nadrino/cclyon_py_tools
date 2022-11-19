@@ -132,7 +132,7 @@ def generateTableStr(dict_):
         - 3 * (len(colWidthList) - 1) \
         - 1
 
-    def getLine(separator_, contentList_=None):
+    def getLine(separator_, contentList_=None, color_=None):
         out = str()
 
         for iCol in range(len(colWidthList)):
@@ -143,8 +143,10 @@ def generateTableStr(dict_):
             else:
                 if iCol != 0:
                     out += " " + separator_ + " "
-                content = str(contentList_[iCol]).ljust(colWidthList[iCol], ' ')[0:colWidthList[iCol]]
-                out += content
+                if not color_ is None:
+                    out += color_
+                out += str(contentList_[iCol]).ljust(colWidthList[iCol], ' ')[0:colWidthList[iCol]]
+                out += tColors.resetColor
 
         return out
 
@@ -159,7 +161,7 @@ def generateTableStr(dict_):
             lineContent.append( values[iJob] )
 
         print( lineContent )
-        linesList.append( getLine( "│", lineContent ) )
+        linesList.append( getLine( separator_="│", contentList_=lineContent, color_=tColors.greenColor ) )
 
     linesList.append(getLine("┴"))
 
