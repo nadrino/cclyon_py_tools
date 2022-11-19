@@ -134,10 +134,13 @@ def generateTableStr(dict_):
         out = str()
 
         for iCol in range(len(colWidthList)):
-            if iCol != 0: out += " " + separator_ + " "
             if contentList_ is None:
+                if iCol != 0:
+                    out += "─" + separator_ + "─"
                 out += "─" * (colWidthList[iCol])
             else:
+                if iCol != 0:
+                    out += " " + separator_ + " "
                 out += str(contentList_[iCol]).ljust(colWidthList[iCol], ' ')
 
         return out
@@ -154,7 +157,6 @@ def generateTableStr(dict_):
 
     return linesList
 
-print( runningJobTable )
 print("\n".join(generateTableStr(runningJobTable)))
 
 
