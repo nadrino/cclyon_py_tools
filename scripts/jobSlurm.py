@@ -85,6 +85,8 @@ def generateTableStr(dict_):
     nEntries = 0
 
     for title, values in dict_.items():
+        if title in jobDataMask: continue
+
         colWidthList.append(len(title))
         colKeyList.append(title)
         nEntries = len(values)
@@ -125,6 +127,8 @@ def generateTableStr(dict_):
 
         lineContent = list()
         for key, values in dict_.items():
+            if key in jobDataMask: continue
+
             if key == "State":
                 if values[iJob] == "RUNNING":
                     entryColor = greenColor
