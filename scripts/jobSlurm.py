@@ -34,7 +34,7 @@ if not cl.isOptionTriggered("noColor"):
     greenColor = tColors.greenColor
 
 filePath = os.getenv("HOME") + "/squeue.json"
-os.system("squeue --json " + " ".join(cl.trailArgList) + " > " + filePath)
+os.system("squeue -u $(whoami) --json " + " ".join(cl.trailArgList) + " > " + filePath)
 
 if not os.path.isfile(filePath):
     print(tColors.error + filePath + " has not been found.")
