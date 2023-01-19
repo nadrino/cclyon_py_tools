@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import getpass
 import json
 import time
 
@@ -70,6 +71,9 @@ runningJobTable["Script name"] = list()
 header = True
 separation_bar = ''
 for job in data['jobs']:
+    if job['user_name'] != getpass.getuser():
+        continue
+
     runningJobTable["Job-id"].append(job["job_id"])
     runningJobTable["State"].append(job["job_state"])
     runningJobTable["CPUs"].append(job["cpus"])
