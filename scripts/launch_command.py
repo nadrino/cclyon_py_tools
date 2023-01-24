@@ -106,7 +106,7 @@ jobSubArgList.append("--mem=" + str(3 * nCores) + "G")
 
 jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
 jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
-jobSubArgList.append("--mail-user=ablanche@lpnhe.in2p3.fr")
+jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
 jobSubArgList.append(scriptFolder + "/Script_" + outFilesBaseName + ".sh")
 jobSubCmd = " ".join(jobSubArgList)
 
