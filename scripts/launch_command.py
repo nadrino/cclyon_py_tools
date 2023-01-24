@@ -23,6 +23,7 @@ print(tColors.redColor + "************** Launch command starts **************" +
 cl = CmdLineReader.CmdLineReader()
 cl.addOption("nCores", ["-mc"], description_="Trigger multi-core queue and specify nb threads/slots", nbExpectedArgs_=1)
 cl.addOption("debug", ["-debug"], description_="Trigger debug mode", nbExpectedArgs_=0)
+cl.addOption("longJob", ["-long"], description_="Long time jobs (72h instead of 24h)", nbExpectedArgs_=0)
 cl.addOption("interactive", ["-interactive"], description_="Launch the generated script in interactive mode", nbExpectedArgs_=0)
 cl.addOption("group", ["-g"], description_="Specify group", nbExpectedArgs_=1)
 
@@ -88,8 +89,21 @@ jobSubArgList = list()
 jobSubArgList.append("sbatch")
 jobSubArgList.append("-L sps")
 jobSubArgList.append("--account=" + groupName)
+
+# https://doc.cc.in2p3.fr/fr/Computing/slurm/submit.html#sbatch-computing
+if cl.isOptionTriggered("longJob"):
+    jobSubArgList.append("--time=72:00:00")
+else:
+    jobSubArgList.append("--time=24:00:00")
+
+
+nCores = 1
 if cl.isOptionTriggered("nCores"):
-    jobSubArgList.append("-n " + str(cl.getOptionValues("nCores")[0]))
+    nCores = int(cl.getOptionValues("nCores")[0])
+
+jobSubArgList.append("-n " + str(nCores))
+jobSubArgList.append("--mem=" + str(3 * nCores) + "G")
+
 jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
 jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
 jobSubArgList.append("--mail-user=ablanche@lpnhe.in2p3.fr")
