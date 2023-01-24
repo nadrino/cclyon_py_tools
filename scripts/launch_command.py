@@ -102,7 +102,7 @@ if cl.isOptionTriggered("nCores"):
     nCores = int(cl.getOptionValues("nCores")[0])
 
 jobSubArgList.append("-n " + str(nCores))
-jobSubArgList.append("-c " + str(nCores))
+# jobSubArgList.append("-c " + str(nCores))
 # jobSubArgList.append("--mem=" + str(3 * nCores) + "G")
 jobSubArgList.append("--mem=50G")
 
