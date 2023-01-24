@@ -103,7 +103,8 @@ if cl.isOptionTriggered("nCores"):
 
 jobSubArgList.append("-n " + str(nCores))
 jobSubArgList.append("-c " + str(nCores))
-jobSubArgList.append("--mem=" + str(3 * nCores) + "G")
+# jobSubArgList.append("--mem=" + str(3 * nCores) + "G")
+jobSubArgList.append("--mem=50G")
 
 jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
 jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
