@@ -101,10 +101,12 @@ nCores = 1
 if cl.isOptionTriggered("nCores"):
     nCores = int(cl.getOptionValues("nCores")[0])
 
-jobSubArgList.append("-n " + str(nCores))
-# jobSubArgList.append("-c " + str(nCores))
-# jobSubArgList.append("--mem=" + str(3 * nCores) + "G")
-jobSubArgList.append("--mem=50G")
+# jobSubArgList.append("-n " + str(nCores))
+jobSubArgList.append("-c " + str(nCores))
+
+maxRam = min( 3 * nCores, 100 ) # 100 GB max
+maxRam = max( maxRam, 5 ) # 5GB min
+jobSubArgList.append("--mem=" + str(maxRam) + "G")
 
 jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
 jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
