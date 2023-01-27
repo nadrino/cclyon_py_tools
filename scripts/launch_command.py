@@ -34,7 +34,7 @@ cl.readCommandLineArgs()
 cl.printTriggeredArgs()
 
 if len(cl.trailArgList) == 0:
-    print(tColors.error + "No command specified to be launched")
+    print(tColors.error, "No command specified to be launched")
     exit(1)
 
 if cl.isOptionTriggered("group"):
