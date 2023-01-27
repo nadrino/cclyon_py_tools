@@ -20,8 +20,8 @@ cl.keepTailArgs = True
 cl.printConfigSummary()
 cl.readCommandLineArgs()
 
-if len(cl.trailArgList) != 0:
-    print(tColors.warning + "Extra arguments : " + " ".join(cl.trailArgList))
+# if len(cl.trailArgList) != 0:
+#     print(tColors.warning, "Extra arguments :", " ".join(cl.trailArgList))
 
 
 redColor = ""
@@ -35,7 +35,7 @@ if not cl.isOptionTriggered("noColor"):
     greenColor = tColors.greenColor
 
 filePath = os.getenv("HOME") + "/squeue.json"
-os.system("squeue -u $(whoami) --json " + " ".join(cl.trailArgList) + " > " + filePath)
+os.system("squeue -u $(whoami) --json > " + filePath)
 
 if not os.path.isfile(filePath):
     print(tColors.error + filePath + " has not been found.")
