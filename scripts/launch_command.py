@@ -91,18 +91,18 @@ jobSubArgList.append("sbatch")
 
 if socket.gethostname().endswith('.baobab'):
     jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
+    jobSubArgList.append("-p shared-cpu")
+    jobSubArgList.append("--time=12:00:00")
 else:
     # CCLYON
     jobSubArgList.append("-L sps")
     jobSubArgList.append("--account=" + groupName)
     jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
-
-# https://doc.cc.in2p3.fr/fr/Computing/slurm/submit.html#sbatch-computing
-if cl.isOptionTriggered("longJob"):
-    jobSubArgList.append("--time=72:00:00")
-else:
-    jobSubArgList.append("--time=24:00:00")
-
+    # https://doc.cc.in2p3.fr/fr/Computing/slurm/submit.html#sbatch-computing
+    if cl.isOptionTriggered("longJob"):
+        jobSubArgList.append("--time=72:00:00")
+    else:
+        jobSubArgList.append("--time=24:00:00")
 
 nCores = 1
 if cl.isOptionTriggered("nCores"):
