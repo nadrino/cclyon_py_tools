@@ -8,6 +8,7 @@ from GenericToolbox import CmdLineReader
 
 import sys
 import os
+import socket
 
 
 # Checking required env variables
@@ -87,8 +88,14 @@ print(tColors.greenColor + "Launch script writen as : " + tColors.resetColor + s
 # > Preparing job script
 jobSubArgList = list()
 jobSubArgList.append("sbatch")
-jobSubArgList.append("-L sps")
-jobSubArgList.append("--account=" + groupName)
+
+if socket.gethostname().endswith('.baobab'):
+    jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
+else:
+    # CCLYON
+    jobSubArgList.append("-L sps")
+    jobSubArgList.append("--account=" + groupName)
+    jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
 
 # https://doc.cc.in2p3.fr/fr/Computing/slurm/submit.html#sbatch-computing
 if cl.isOptionTriggered("longJob"):
@@ -110,7 +117,6 @@ jobSubArgList.append("--mem=" + str(maxRam) + "G")
 
 jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
 jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
-jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
 jobSubArgList.append(scriptFolder + "/Script_" + outFilesBaseName + ".sh")
 jobSubCmd = " ".join(jobSubArgList)
 
