@@ -87,9 +87,6 @@ def generateTableStr(dict_):
     global nRunning
     global nPending
 
-    # nRunning = 0
-    # nPending = 0
-
     for title, values in dict_.items():
         if title in jobDataMask: continue
 
@@ -140,7 +137,6 @@ def generateTableStr(dict_):
 
             if key == "State":
                 if values[iJob] == "RUNNING":
-                    print("lol")
                     nRunning += 1
                     entryColor = greenColor
                 elif values[iJob] == "PENDING":
@@ -154,6 +150,7 @@ def generateTableStr(dict_):
 
     return linesList
 
+table = generateTableStr(runningJobTable)
 docString = list()
 docString.append(redColor + "-> Number of remaining jobs : " + str(nRunning + nPending) + resetColor)
 docString.append(redColor + "-> Number of running jobs : " + str(nRunning) + resetColor)
@@ -161,7 +158,7 @@ docString.append(redColor + "-> Number of pending jobs : " + str(nPending) + res
 docString.append("To see the full script names add the option : --full-script-names")
 
 print("\n".join(docString))
-print("\n".join(generateTableStr(runningJobTable)))
+print("\n".join(table))
 print("\n".join(docString))
 
 os.system("rm " + filePath)
