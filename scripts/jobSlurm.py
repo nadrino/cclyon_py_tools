@@ -44,19 +44,13 @@ if not os.path.isfile(filePath):
 
 data = json.load(open(filePath, 'r'))
 
-nRunning = 0
-nPending = 0
-for job in data['jobs']:
-    if job["job_state"] == "PENDING":
-        nPending += 1
-    if job["job_state"] == "RUNNING":
-        nRunning += 1
-
-docString = list()
-docString.append(redColor + "-> Number of remaining jobs : " + str(nRunning + nPending) + resetColor)
-docString.append(redColor + "-> Number of running jobs : " + str(nRunning) + resetColor)
-docString.append(redColor + "-> Number of pending jobs : " + str(nPending) + resetColor)
-docString.append("To see the full script names add the option : --full-script-names")
+# nRunning = 0
+# nPending = 0
+# for job in data['jobs']:
+#     if job["job_state"] == "PENDING":
+#         nPending += 1
+#     if job["job_state"] == "RUNNING":
+#         nRunning += 1
 
 jobDataMask = list()
 jobDataMask.append("Start time")
@@ -82,11 +76,19 @@ for job in data['jobs']:
     if runningJobTable["State"][-1] == "RUNNING":
         runningJobTable["Start time"][-1] = str(time.ctime(job["start_time"]))
 
+nRunning = 0
+nPending = 0
 
 def generateTableStr(dict_):
     colWidthList = list()
     colKeyList = list()
     nEntries = 0
+
+    global nRunning
+    global nPending
+
+    nRunning = 0
+    nPending = 0
 
     for title, values in dict_.items():
         if title in jobDataMask: continue
@@ -138,8 +140,10 @@ def generateTableStr(dict_):
 
             if key == "State":
                 if values[iJob] == "RUNNING":
+                    nRunning += 1
                     entryColor = greenColor
                 elif values[iJob] == "PENDING":
+                    nPending += 1
                     entryColor = goldColor
             lineContent.append(values[iJob])
 
@@ -149,6 +153,11 @@ def generateTableStr(dict_):
 
     return linesList
 
+docString = list()
+docString.append(redColor + "-> Number of remaining jobs : " + str(nRunning + nPending) + resetColor)
+docString.append(redColor + "-> Number of running jobs : " + str(nRunning) + resetColor)
+docString.append(redColor + "-> Number of pending jobs : " + str(nPending) + resetColor)
+docString.append("To see the full script names add the option : --full-script-names")
 
 print("\n".join(docString))
 print("\n".join(generateTableStr(runningJobTable)))
