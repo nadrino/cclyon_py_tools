@@ -84,8 +84,8 @@ def generateTableStr(dict_):
     colKeyList = list()
     nEntries = 0
 
-    # global nRunning
-    # global nPending
+    global nRunning
+    global nPending
 
     # nRunning = 0
     # nPending = 0
