@@ -140,6 +140,7 @@ def generateTableStr(dict_):
 
             if key == "State":
                 if values[iJob] == "RUNNING":
+                    print("lol")
                     nRunning += 1
                     entryColor = greenColor
                 elif values[iJob] == "PENDING":
