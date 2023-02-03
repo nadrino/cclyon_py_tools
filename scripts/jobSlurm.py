@@ -87,8 +87,8 @@ def generateTableStr(dict_):
     # global nRunning
     # global nPending
 
-    nRunning = 0
-    nPending = 0
+    # nRunning = 0
+    # nPending = 0
 
     for title, values in dict_.items():
         if title in jobDataMask: continue
