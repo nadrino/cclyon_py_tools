@@ -70,7 +70,10 @@ for job in data['jobs']:
 
     runningJobTable["Job-id"].append(job["job_id"])
     runningJobTable["State"].append(job["job_state"])
-    runningJobTable["CPUs"].append(job["cpus"])
+    if isinstance(job["cpus"], dict):
+        runningJobTable["CPUs"].append(job["cpus"]["number"])
+    else:
+        runningJobTable["CPUs"].append(job["cpus"])
     runningJobTable["Script name"].append(job["name"])
     runningJobTable["Start time"].append("")
     if runningJobTable["State"][-1] == "RUNNING":
