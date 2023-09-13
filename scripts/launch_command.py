@@ -89,7 +89,7 @@ print(tColors.greenColor + "Launch script writen as : " + tColors.resetColor + s
 jobSubArgList = list()
 jobSubArgList.append("sbatch")
 
-if socket.gethostname().endswith('.baobab'):
+if socket.gethostname().endswith('.baobab') or socket.gethostname().endswith('.yggdrasil'):
     jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
     jobSubArgList.append("-p shared-cpu")
     jobSubArgList.append("--time=12:00:00")
