@@ -139,6 +139,7 @@ def generateTableStr(dict_):
             if key in jobDataMask: continue
 
             if key == "State":
+                print( values[iJob] )
                 if values[iJob] == "RUNNING" or values[iJob] == "['RUNNING']":
                     nRunning += 1
                     entryColor = greenColor
