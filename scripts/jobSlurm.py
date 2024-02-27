@@ -139,11 +139,10 @@ def generateTableStr(dict_):
             if key in jobDataMask: continue
 
             if key == "State":
-                print( values[iJob] )
-                if values[iJob] == "RUNNING" or values[iJob] == "['RUNNING']":
+                if "RUNNING" in values[iJob]:
                     nRunning += 1
                     entryColor = greenColor
-                elif values[iJob] == "PENDING" or values[iJob] == "['PENDING']":
+                elif "PENDING" in values[iJob]:
                     nPending += 1
                     entryColor = goldColor
             lineContent.append(values[iJob])
