@@ -92,8 +92,6 @@ if socket.gethostname().endswith('.cern.ch'):
     condorSubFile = f"""
     notify_user  = adrien.blanchet@cern.ch
     notification = Error
-    PreCmd       = source $HOME/.profile
-    JOBNAME      = {outFilesBaseName}
     executable   = {executableScriptPath}
     output       = {logFolder}/log_full_{outFilesBaseName}.out
     error        = {logFolder}/log_full_{outFilesBaseName}.err
