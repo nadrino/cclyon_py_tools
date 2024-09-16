@@ -70,29 +70,13 @@ scriptFolder = JOBS_DIR + "/scripts/" + cl.trailArgList[0] + "/"
 tIO.mkdir(logFolder)
 tIO.mkdir(scriptFolder)
 
-# > Preparing launch script
-cmdBashScript = "#!/bin/bash\n"
-cmdBashScript += "\n"
-cmdBashScript += "ulimit -c 0 # disable core dumps\n"
-cmdBashScript += "echo cd " + executionFolder + "\n"
-cmdBashScript += "cd " + executionFolder + "\n"
-cmdBashScript += "\n"
-cmdBashScript += "echo '*******************************************************************'\n"
-cmdBashScript += "echo COMPUTATION BEGINS\n"
-cmdBashScript += "echo '*******************************************************************'\n"
-cmdBashScript += "echo " + cmdToJob + "\n"
-cmdBashScript += cmdToJob + " &> " + logFolder + "/log_" + outFilesBaseName + ".log \n"
-cmdBashScript += "echo '*******************************************************************'\n"
-cmdBashScript += "echo COMPUTATION FINISHED\n"
-cmdBashScript += "echo '*******************************************************************'\n"
-
+envTransferCmd = str()
+jobSubCmd = str()
 executableScriptPath = scriptFolder + "/Script_" + outFilesBaseName + ".sh"
 
-open(executableScriptPath, 'w').write(cmdBashScript)
-print(tColors.greenColor + "Launch script writen as : " + tColors.resetColor + scriptFolder + "/Script_" + outFilesBaseName + ".sh")
-
-jobSubCmd = str()
 if socket.gethostname().endswith('.cern.ch'):
+
+    envTransferCmd = "source $HOME/.profile"
 
     JobFlavour = "workday"
     if cl.isOptionTriggered("longJob"):
@@ -154,6 +138,29 @@ else:
     jobSubArgList.append(scriptFolder + "/Script_" + outFilesBaseName + ".sh")
     jobSubCmd = " ".join(jobSubArgList)
 
+
+cmdBashScript = f"""
+#! /bin/bash
+
+{envTransferCmd}
+
+ulimit -c 0 # disable core dumps
+echo cd {executionFolder}
+cd {executionFolder}
+
+echo '*******************************************************************'
+echo COMPUTATION BEGINS
+echo '*******************************************************************'
+
+echo {cmdToJob}
+{cmdToJob} &> {logFolder}/log_{outFilesBaseName}.log
+
+echo '*******************************************************************'
+echo COMPUTATION FINISHED
+echo '*******************************************************************'
+"""
+open(executableScriptPath, 'w').write(cmdBashScript)
+print(tColors.greenColor + "Launch script writen as : " + tColors.resetColor + scriptFolder + "/Script_" + outFilesBaseName + ".sh")
 print(tColors.greenColor + "Job command : " + tColors.resetColor + jobSubCmd)
 print(tColors.greenColor + "Log path : " + tColors.resetColor + logFolder + "/log_" + outFilesBaseName + ".log")
 
