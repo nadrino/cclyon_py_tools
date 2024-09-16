@@ -24,6 +24,7 @@ print(tColors.redColor + "************** Launch command starts **************" +
 cl = CmdLineReader.CmdLineReader()
 cl.addOption("nCores", ["-mc"], description_="Trigger multi-core queue and specify nb threads/slots", nbExpectedArgs_=1)
 cl.addOption("debug", ["-debug"], description_="Trigger debug mode", nbExpectedArgs_=0)
+cl.addOption("shortJob", ["-short"], description_="longlunch approx 2h", nbExpectedArgs_=0)
 cl.addOption("longJob", ["-long"], description_="Long time jobs (72h instead of 24h)", nbExpectedArgs_=0)
 cl.addOption("interactive", ["-interactive"], description_="Launch the generated script in interactive mode", nbExpectedArgs_=0)
 cl.addOption("group", ["-g"], description_="Specify group", nbExpectedArgs_=1)
@@ -79,7 +80,9 @@ if socket.gethostname().endswith('.cern.ch'):
     envTransferCmd = "source $HOME/.profile"
 
     JobFlavour = "workday"
-    if cl.isOptionTriggered("longJob"):
+    if cl.isOptionTriggered("shortJob"):
+        JobFlavour = "longlunch"
+    elif cl.isOptionTriggered("longJob"):
         JobFlavour = "testmatch"
     # espresso     = 20 minutes
     # microcentury = 1 hour
