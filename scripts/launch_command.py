@@ -75,9 +75,13 @@ envTransferCmd = str()
 jobSubCmd = str()
 executableScriptPath = scriptFolder + "/Script_" + outFilesBaseName + ".sh"
 
+cmdForJob = f"{cmdToJob} &> {logFolder}/log_{outFilesBaseName}.log"
+
+
 if socket.gethostname().endswith('.cern.ch'):
 
     envTransferCmd = "source $HOME/.profile"
+    cmdForJob = f"{cmdToJob}"
 
     JobFlavour = "workday"
     if cl.isOptionTriggered("shortJob"):
@@ -154,7 +158,7 @@ echo COMPUTATION BEGINS
 echo '*******************************************************************'
 
 echo {cmdToJob}
-{cmdToJob} &> {logFolder}/log_{outFilesBaseName}.log
+{cmdForJob}
 
 echo '*******************************************************************'
 echo COMPUTATION FINISHED
