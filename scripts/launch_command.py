@@ -57,6 +57,10 @@ for cmdArg in cl.trailArgList:
         if len(argElement) > 20: argElement = ".." + argElement[-20:-1]
         outFilesBaseName += "_" + argElement
 
+nCores = 1
+if cl.isOptionTriggered("nCores"):
+    nCores = int(cl.getOptionValues("nCores")[0])
+
 if len(outFilesBaseName) > 200: outFilesBaseName = outFilesBaseName[0:200]
 print(tColors.goldColor + "Output files base name : " + tColors.resetColor + outFilesBaseName)
 
@@ -82,43 +86,73 @@ cmdBashScript += "echo '********************************************************
 cmdBashScript += "echo COMPUTATION FINISHED\n"
 cmdBashScript += "echo '*******************************************************************'\n"
 
-open(scriptFolder + "/Script_" + outFilesBaseName + ".sh", 'w').write(cmdBashScript)
+executableScriptPath = scriptFolder + "/Script_" + outFilesBaseName + ".sh"
+
+open(executableScriptPath, 'w').write(cmdBashScript)
 print(tColors.greenColor + "Launch script writen as : " + tColors.resetColor + scriptFolder + "/Script_" + outFilesBaseName + ".sh")
 
-# > Preparing job script
-jobSubArgList = list()
-jobSubArgList.append("sbatch")
+jobSubCmd = str()
+if socket.gethostname().endswith('.cern.ch'):
 
-if socket.gethostname().endswith('.baobab') or socket.gethostname().endswith('.yggdrasil'):
-    jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
-    jobSubArgList.append("-p shared-cpu")
-    jobSubArgList.append("--time=12:00:00")
-else:
-    # CCLYON
-    jobSubArgList.append("-L sps")
-    jobSubArgList.append("--account=" + groupName)
-    jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
-    # https://doc.cc.in2p3.fr/fr/Computing/slurm/submit.html#sbatch-computing
+    JobFlavour = "workday"
     if cl.isOptionTriggered("longJob"):
-        jobSubArgList.append("--time=72:00:00")
+        JobFlavour = "testmatch"
+    # espresso     = 20 minutes
+    # microcentury = 1 hour
+    # longlunch    = 2 hours
+    # workday      = 8 hours
+    # tomorrow     = 1 day
+    # testmatch    = 3 days
+    # nextweek     = 1 week
+
+    condorSubFile = f"""
+    notify_user  = adrien.blanchet@cern.ch
+    notification = Error
+    PreCmd       = source $HOME/.profile
+    JOBNAME      = {outFilesBaseName}
+    executable   = {executableScriptPath}
+    output       = {logFolder}/log_full_{outFilesBaseName}.out
+    error        = {logFolder}/log_full_{outFilesBaseName}.err
+    log          = {logFolder}/log_full_{outFilesBaseName}.log
+    request_cpus = {nCores}
+    +JobFlavour  = {JobFlavour}
+    queue
+    """
+    open(scriptFolder + "/Script_" + outFilesBaseName + ".sub", 'w').write(condorSubFile)
+
+    jobSubCmd = f"condor_submit {scriptFolder}/Script_{outFilesBaseName}.sub"
+else:
+
+    # > Preparing job script
+    jobSubArgList = list()
+    jobSubArgList.append("sbatch")
+
+    if socket.gethostname().endswith('.baobab') or socket.gethostname().endswith('.yggdrasil'):
+        jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
+        jobSubArgList.append("-p shared-cpu")
+        jobSubArgList.append("--time=12:00:00")
     else:
-        jobSubArgList.append("--time=24:00:00")
+        # CCLYON
+        jobSubArgList.append("-L sps")
+        jobSubArgList.append("--account=" + groupName)
+        jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
+        # https://doc.cc.in2p3.fr/fr/Computing/slurm/submit.html#sbatch-computing
+        if cl.isOptionTriggered("longJob"):
+            jobSubArgList.append("--time=72:00:00")
+        else:
+            jobSubArgList.append("--time=24:00:00")
 
-nCores = 1
-if cl.isOptionTriggered("nCores"):
-    nCores = int(cl.getOptionValues("nCores")[0])
+    # jobSubArgList.append("-n " + str(nCores))
+    jobSubArgList.append("-c " + str(nCores))
 
-# jobSubArgList.append("-n " + str(nCores))
-jobSubArgList.append("-c " + str(nCores))
+    maxRam = min( 3 * nCores, 100 ) # 100 GB max
+    maxRam = max( maxRam, 5 ) # 5GB min
+    jobSubArgList.append("--mem=" + str(maxRam) + "G")
 
-maxRam = min( 3 * nCores, 100 ) # 100 GB max
-maxRam = max( maxRam, 5 ) # 5GB min
-jobSubArgList.append("--mem=" + str(maxRam) + "G")
-
-jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
-jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
-jobSubArgList.append(scriptFolder + "/Script_" + outFilesBaseName + ".sh")
-jobSubCmd = " ".join(jobSubArgList)
+    jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
+    jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
+    jobSubArgList.append(scriptFolder + "/Script_" + outFilesBaseName + ".sh")
+    jobSubCmd = " ".join(jobSubArgList)
 
 print(tColors.greenColor + "Job command : " + tColors.resetColor + jobSubCmd)
 print(tColors.greenColor + "Log path : " + tColors.resetColor + logFolder + "/log_" + outFilesBaseName + ".log")
