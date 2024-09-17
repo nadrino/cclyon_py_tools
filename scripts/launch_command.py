@@ -99,17 +99,17 @@ if socket.gethostname().endswith('.cern.ch'):
     # nextweek     = 1 week
 
     condorSubFile = f"""
-    notify_user    = adrien.blanchet@cern.ch
-    notification   = Error
-    executable     = {executableScriptPath}
-    output         = {logFolder}/log_full_{outFilesBaseName}.out
-    error          = {logFolder}/log_full_{outFilesBaseName}.err
-    log            = {logFolder}/log_full_{outFilesBaseName}.log
-    request_cpus   = {nCores}
-    +JobFlavour    = {JobFlavour}
-    request_memory = 10G
-    # request_disk   = 10G
-    queue
+notify_user    = adrien.blanchet@cern.ch
+notification   = Error
+executable     = {executableScriptPath}
+output         = {logFolder}/log_full_{outFilesBaseName}.out
+error          = {logFolder}/log_full_{outFilesBaseName}.err
+log            = {logFolder}/log_full_{outFilesBaseName}.log
+request_cpus   = {nCores}
++JobFlavour    = {JobFlavour}
+request_memory = 10G
+request_disk   = 10G
+queue
     """
     open(scriptFolder + "/Script_" + outFilesBaseName + ".sub", 'w').write(condorSubFile)
 
