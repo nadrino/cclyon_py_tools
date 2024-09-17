@@ -78,7 +78,6 @@ liveLogPath = f"{logFolder}/log_{outFilesBaseName}.log"
 cmdForJob = f"{cmdToJob} &> {liveLogPath}"
 
 
-
 if socket.gethostname().endswith('.cern.ch'):
 
     # executionFolder = executionFolder.replace("/eos/home-a/adblanch", "/afs/cern.ch/user/a/adblanch/eos")
@@ -171,6 +170,8 @@ echo COMPUTATION FINISHED
 echo '*******************************************************************'
 """
 open(executableScriptPath, 'w').write(cmdBashScript)
+
+open(liveLogPath, "w").write("")
 
 # make the script executable
 st = os.stat(executableScriptPath)
