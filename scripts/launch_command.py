@@ -6,9 +6,9 @@ from GenericToolbox import Old as tOld
 from GenericToolbox import Colors as tColors
 from GenericToolbox import CmdLineReader
 
-import sys
 import os
 import socket
+import stat
 
 
 # Checking required env variables
@@ -74,14 +74,14 @@ tIO.mkdir(scriptFolder)
 envTransferCmd = str()
 jobSubCmd = str()
 executableScriptPath = scriptFolder + "/Script_" + outFilesBaseName + ".sh"
-
 cmdForJob = f"{cmdToJob} &> {logFolder}/log_{outFilesBaseName}.log"
 
 
 if socket.gethostname().endswith('.cern.ch'):
 
+    altLogFolder = "/eos/home-a/adblanch/logs"
     envTransferCmd = "source $HOME/.profile"
-    cmdForJob = f"{cmdToJob}"
+    cmdForJob = f"{cmdToJob} &> {altLogFolder}/log_{outFilesBaseName}.log"
 
     JobFlavour = "workday"
     if cl.isOptionTriggered("shortJob"):
@@ -97,14 +97,16 @@ if socket.gethostname().endswith('.cern.ch'):
     # nextweek     = 1 week
 
     condorSubFile = f"""
-    notify_user  = adrien.blanchet@cern.ch
-    notification = Error
-    executable   = {executableScriptPath}
-    output       = {logFolder}/log_full_{outFilesBaseName}.out
-    error        = {logFolder}/log_full_{outFilesBaseName}.err
-    log          = {logFolder}/log_full_{outFilesBaseName}.log
-    request_cpus = {nCores}
-    +JobFlavour  = {JobFlavour}
+    notify_user    = adrien.blanchet@cern.ch
+    notification   = Error
+    executable     = {executableScriptPath}
+    output         = {logFolder}/log_full_{outFilesBaseName}.out
+    error          = {logFolder}/log_full_{outFilesBaseName}.err
+    log            = {logFolder}/log_full_{outFilesBaseName}.log
+    request_cpus   = {nCores}
+    +JobFlavour    = {JobFlavour}
+    request_memory = 10G
+    # request_disk   = 10G
     queue
     """
     open(scriptFolder + "/Script_" + outFilesBaseName + ".sub", 'w').write(condorSubFile)
@@ -165,6 +167,11 @@ echo COMPUTATION FINISHED
 echo '*******************************************************************'
 """
 open(executableScriptPath, 'w').write(cmdBashScript)
+
+# make the script executable
+st = os.stat(executableScriptPath)
+os.chmod('somefile', st.st_mode | stat.S_IEXEC)
+
 print(tColors.greenColor + "Launch script writen as : " + tColors.resetColor + scriptFolder + "/Script_" + outFilesBaseName + ".sh")
 print(tColors.greenColor + "Job command : " + tColors.resetColor + jobSubCmd)
 print(tColors.greenColor + "Log path : " + tColors.resetColor + logFolder + "/log_" + outFilesBaseName + ".log")
