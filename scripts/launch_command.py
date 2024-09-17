@@ -81,7 +81,8 @@ cmdForJob = f"{cmdToJob} &> {liveLogPath}"
 
 if socket.gethostname().endswith('.cern.ch'):
 
-    liveLogPath = f"/eos/home-a/adblanch/logs/{cl.trailArgList[0]}/log_{outFilesBaseName}.log"
+    executionFolder = executionFolder.replace("/eos/home-a/adblanch", "/afs/cern.ch/user/a/adblanch/eos")
+    liveLogPath = f"/afs/cern.ch/user/a/adblanch/eos/logs/{cl.trailArgList[0]}/log_{outFilesBaseName}.log"
     envTransferCmd = "source $HOME/.profile"
     cmdForJob = f"{cmdToJob} &> {liveLogPath}"
 
