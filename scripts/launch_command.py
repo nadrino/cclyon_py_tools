@@ -114,7 +114,7 @@ queue
 """
     open(scriptFolder + "/Script_" + outFilesBaseName + ".sub", 'w').write(condorSubFile)
 
-    jobSubCmd = f"condor_submit {scriptFolder}/Script_{outFilesBaseName}.sub"
+    jobSubCmd = f"cd $HOME && condor_submit {scriptFolder}/Script_{outFilesBaseName}.sub && cd -"
 else:
 
     # > Preparing job script
