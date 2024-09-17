@@ -170,7 +170,7 @@ open(executableScriptPath, 'w').write(cmdBashScript)
 
 # make the script executable
 st = os.stat(executableScriptPath)
-os.chmod('somefile', st.st_mode | stat.S_IEXEC)
+os.chmod(executableScriptPath, st.st_mode | stat.S_IEXEC)
 
 print(tColors.greenColor + "Launch script writen as : " + tColors.resetColor + scriptFolder + "/Script_" + outFilesBaseName + ".sh")
 print(tColors.greenColor + "Job command : " + tColors.resetColor + jobSubCmd)
