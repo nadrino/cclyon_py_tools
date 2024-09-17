@@ -83,7 +83,7 @@ if socket.gethostname().endswith('.cern.ch'):
     # executionFolder = executionFolder.replace("/eos/home-a/adblanch", "/afs/cern.ch/user/a/adblanch/eos")
     liveLogPath = f"/eos/home-a/adblanch/logs/{cl.trailArgList[0]}/log_{outFilesBaseName}.log"
     tIO.mkdir(f"/eos/home-a/adblanch/logs/{cl.trailArgList[0]}")
-    envTransferCmd = "source $HOME/.profile"
+    # envTransferCmd = "source $HOME/.profile"
     cmdForJob = f"{cmdToJob} &> {liveLogPath}"
 
     JobFlavour = "workday"
@@ -110,6 +110,7 @@ request_cpus   = {nCores}
 +JobFlavour    = {JobFlavour}
 request_memory = 10G
 request_disk   = 10G
+getenv         = True
 queue
 """
     open(scriptFolder + "/Script_" + outFilesBaseName + ".sub", 'w').write(condorSubFile)
