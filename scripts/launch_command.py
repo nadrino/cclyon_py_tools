@@ -110,7 +110,7 @@ request_cpus   = {nCores}
 request_memory = 10G
 request_disk   = 10G
 queue
-    """
+"""
     open(scriptFolder + "/Script_" + outFilesBaseName + ".sub", 'w').write(condorSubFile)
 
     jobSubCmd = f"condor_submit {scriptFolder}/Script_{outFilesBaseName}.sub"
