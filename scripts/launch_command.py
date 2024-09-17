@@ -74,14 +74,16 @@ tIO.mkdir(scriptFolder)
 envTransferCmd = str()
 jobSubCmd = str()
 executableScriptPath = scriptFolder + "/Script_" + outFilesBaseName + ".sh"
-cmdForJob = f"{cmdToJob} &> {logFolder}/log_{outFilesBaseName}.log"
+liveLogPath = f"{logFolder}/log_{outFilesBaseName}.log"
+cmdForJob = f"{cmdToJob} &> {liveLogPath}"
+
 
 
 if socket.gethostname().endswith('.cern.ch'):
 
-    altLogFolder = "/eos/home-a/adblanch/logs"
+    liveLogPath = f"/eos/home-a/adblanch/logs/{cl.trailArgList[0]}/log_{outFilesBaseName}.log"
     envTransferCmd = "source $HOME/.profile"
-    cmdForJob = f"{cmdToJob} &> {altLogFolder}/log_{outFilesBaseName}.log"
+    cmdForJob = f"{cmdToJob} &> {liveLogPath}"
 
     JobFlavour = "workday"
     if cl.isOptionTriggered("shortJob"):
@@ -172,9 +174,9 @@ open(executableScriptPath, 'w').write(cmdBashScript)
 st = os.stat(executableScriptPath)
 os.chmod(executableScriptPath, st.st_mode | stat.S_IEXEC)
 
-print(tColors.greenColor + "Launch script writen as : " + tColors.resetColor + scriptFolder + "/Script_" + outFilesBaseName + ".sh")
-print(tColors.greenColor + "Job command : " + tColors.resetColor + jobSubCmd)
-print(tColors.greenColor + "Log path : " + tColors.resetColor + logFolder + "/log_" + outFilesBaseName + ".log")
+print(f"{tColors.greenColor}Launch script writen as: {tColors.resetColor}{scriptFolder}/Script_{outFilesBaseName}.sh")
+print(f"{tColors.greenColor}Job command: {tColors.resetColor}{jobSubCmd}")
+print(f"{tColors.greenColor}Log path: {tColors.resetColor}{liveLogPath}")
 
 # > Launching Job
 if not cl.isOptionTriggered("debug"):
