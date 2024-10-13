@@ -150,8 +150,7 @@ else:
     jobSubCmd = " ".join(jobSubArgList)
 
 
-cmdBashScript = f"""
-#! /bin/bash
+cmdBashScript = f"""#! /bin/bash
 
 {envTransferCmd}
 
