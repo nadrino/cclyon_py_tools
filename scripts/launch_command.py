@@ -123,25 +123,25 @@ else:
     jobSubArgList.append("sbatch")
 
     if socket.gethostname().endswith('.baobab') or socket.gethostname().endswith('.yggdrasil'):
-        jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
+        jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
         jobSubArgList.append("-p shared-cpu")
         jobSubArgList.append("--time=12:00:00")
     else:
         # CCLYON
         jobSubArgList.append("-L sps")
         jobSubArgList.append("--account=" + groupName)
-        jobSubArgList.append("--mail-user=adrien.blanchet@unige.ch")
+        jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
         # https://doc.cc.in2p3.fr/fr/Computing/slurm/submit.html#sbatch-computing
         if cl.isOptionTriggered("longJob"):
             jobSubArgList.append("--time=72:00:00")
         else:
-            jobSubArgList.append("--time=24:00:00")
+            jobSubArgList.append("--time=12:00:00")
 
     # jobSubArgList.append("-n " + str(nCores))
     jobSubArgList.append("-c " + str(nCores))
 
-    maxRam = min( 3 * nCores, 100 ) # 100 GB max
-    maxRam = max( maxRam, 5 ) # 5GB min
+    maxRam = min( 4 * nCores, 100 ) # 100 GB max
+    maxRam = max( maxRam, 8 ) # 8GB min
     jobSubArgList.append("--mem=" + str(maxRam) + "G")
 
     jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
