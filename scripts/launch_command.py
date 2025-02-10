@@ -16,6 +16,11 @@ maxRamPerCpu = 5   # GB
 minRamPerJob = 8   # GB
 maxRamPerJob = 63  # GB
 
+def getJobMaxRamStr(nCores_):
+    maxRam = min(maxRamPerCpu * nCores_, maxRamPerJob)
+    maxRam = max(maxRam, minRamPerJob)
+    return str(maxRam)
+
 
 # Checking required env variables
 WORK_DIR = tIO.get_env_variable("WORK_DIR")
@@ -114,7 +119,7 @@ error          = {logFolder}/log_full_{outFilesBaseName}.err
 log            = {logFolder}/log_full_{outFilesBaseName}.log
 request_cpus   = {nCores}
 +JobFlavour    = {JobFlavour}
-request_memory = 10G
+request_memory = {getJobMaxRamStr(nCores)}G
 request_disk   = 10G
 getenv         = True
 queue
@@ -146,10 +151,7 @@ else:
     # jobSubArgList.append("-n " + str(nCores))
     jobSubArgList.append("-c " + str(nCores))
 
-    # 8 GB per cores requested
-    maxRam = min( maxRamPerCpu * nCores, maxRamPerJob )
-    maxRam = max( maxRam, minRamPerJob )
-    jobSubArgList.append("--mem=" + str(maxRam) + "G")
+    jobSubArgList.append("--mem=" + getJobMaxRamStr(nCores) + "G")
 
     jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
     jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
