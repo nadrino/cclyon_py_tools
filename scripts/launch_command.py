@@ -140,7 +140,8 @@ else:
     # jobSubArgList.append("-n " + str(nCores))
     jobSubArgList.append("-c " + str(nCores))
 
-    maxRam = min( 4 * nCores, 100 ) # 100 GB max
+    # 8 GB per cores requested
+    maxRam = min( 8 * nCores, 100 ) # 100 GB max
     maxRam = max( maxRam, 8 ) # 8GB min
     jobSubArgList.append("--mem=" + str(maxRam) + "G")
 
