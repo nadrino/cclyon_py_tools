@@ -11,6 +11,12 @@ import socket
 import stat
 
 
+# ajustable parameters?
+maxRamPerCpu = 5   # GB
+minRamPerJob = 8   # GB
+maxRamPerJob = 63  # GB
+
+
 # Checking required env variables
 WORK_DIR = tIO.get_env_variable("WORK_DIR")
 JOBS_DIR = tIO.get_env_variable("JOBS_DIR")
@@ -141,8 +147,8 @@ else:
     jobSubArgList.append("-c " + str(nCores))
 
     # 8 GB per cores requested
-    maxRam = min( 8 * nCores, 100 ) # 100 GB max
-    maxRam = max( maxRam, 8 ) # 8GB min
+    maxRam = min( maxRamPerCpu * nCores, maxRamPerJob )
+    maxRam = max( maxRam, minRamPerJob )
     jobSubArgList.append("--mem=" + str(maxRam) + "G")
 
     jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
