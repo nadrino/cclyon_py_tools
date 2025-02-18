@@ -5,6 +5,7 @@ import os
 import getpass
 import json
 import time
+import subprocess
 
 import GenericToolbox.IO as tIO
 import GenericToolbox.Colors as tColors
@@ -34,15 +35,19 @@ if not cl.isOptionTriggered("noColor"):
     goldColor = tColors.goldColor
     greenColor = tColors.greenColor
 
-filePath = os.getenv("HOME") + "/squeue.json"
-os.system("squeue -u $(whoami) --json > " + filePath)
+# filePath = os.getenv("HOME") + "/squeue.json"
+# os.system("squeue -u $(whoami) --json > " + filePath)
 
-if not os.path.isfile(filePath):
-    print(tColors.error + filePath + " has not been found.")
-    exit(1)
+output = subprocess.check_output("squeue -u $(whoami) --json", shell=True, text=True).strip()
+data = json.loads(output)
 
 
-data = json.load(open(filePath, 'r'))
+# if not os.path.isfile(filePath):
+#     print(tColors.error + filePath + " has not been found.")
+#     exit(1)
+#
+#
+# data = json.load(open(filePath, 'r'))
 
 # nRunning = 0
 # nPending = 0
@@ -164,4 +169,4 @@ print("\n".join(docString))
 print("\n".join(table))
 print("\n".join(docString))
 
-os.system("rm " + filePath)
+# os.system("rm " + filePath)
