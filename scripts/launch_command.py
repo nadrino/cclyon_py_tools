@@ -10,16 +10,16 @@ import os
 import socket
 import stat
 
-
-# ajustable parameters?
-maxRamPerCpu = 5   # GB
-minRamPerJob = 8   # GB
+# adjustable parameters?
+maxRamPerCpu = 5  # GB
+minRamPerJob = 8  # GB
 maxRamPerJob = 63  # GB
 
+
 def getJobMaxRamStr(nCores_):
-    maxRam = min(maxRamPerCpu * nCores_, maxRamPerJob)
-    maxRam = max(maxRam, minRamPerJob)
-    return str(maxRam)
+  maxRam = min(maxRamPerCpu * nCores_, maxRamPerJob)
+  maxRam = max(maxRam, minRamPerJob)
+  return str(maxRam)
 
 
 # Checking required env variables
@@ -37,7 +37,8 @@ cl.addOption("nCores", ["-mc"], description_="Trigger multi-core queue and speci
 cl.addOption("debug", ["-debug"], description_="Trigger debug mode", nbExpectedArgs_=0)
 cl.addOption("shortJob", ["-short"], description_="longlunch approx 2h", nbExpectedArgs_=0)
 cl.addOption("longJob", ["-long"], description_="Long time jobs (72h instead of 24h)", nbExpectedArgs_=0)
-cl.addOption("interactive", ["-interactive"], description_="Launch the generated script in interactive mode", nbExpectedArgs_=0)
+cl.addOption("interactive", ["-interactive"], description_="Launch the generated script in interactive mode",
+             nbExpectedArgs_=0)
 cl.addOption("group", ["-g"], description_="Specify group", nbExpectedArgs_=1)
 
 cl.keepTailArgs = True
@@ -47,11 +48,11 @@ cl.readCommandLineArgs()
 cl.printTriggeredArgs()
 
 if len(cl.trailArgList) == 0:
-    print(tColors.error, "No command specified to be launched")
-    exit(1)
+  print(tColors.error, "No command specified to be launched")
+  exit(1)
 
 if cl.isOptionTriggered("group"):
-    groupName = cl.getOptionValues("group")[0]
+  groupName = cl.getOptionValues("group")[0]
 
 # > Parsing parameters
 cmdToJob = " ".join(cl.trailArgList)
@@ -61,17 +62,17 @@ print(tColors.greenColor + "Running from : " + tColors.resetColor + executionFol
 # > Outfile names
 outFilesBaseName = tIO.getNowTimeString()
 for cmdArg in cl.trailArgList:
-    argElement = cmdArg  # Copy string object
-    argElement = argElement.replace("@", "X")  # Replacing special characters
-    if argElement[0] != '-' or (argElement[0:2] == "--"):
-        if "/" in argElement: argElement = argElement.split("/")[-1]
-        if "." in argElement: argElement = argElement.split(".")[0]
-        if len(argElement) > 20: argElement = ".." + argElement[-20:-1]
-        outFilesBaseName += "_" + argElement
+  argElement = cmdArg  # Copy string object
+  argElement = argElement.replace("@", "X")  # Replacing special characters
+  if argElement[0] != '-' or (argElement[0:2] == "--"):
+    if "/" in argElement: argElement = argElement.split("/")[-1]
+    if "." in argElement: argElement = argElement.split(".")[0]
+    if len(argElement) > 20: argElement = ".." + argElement[-20:-1]
+    outFilesBaseName += "_" + argElement
 
 nCores = 1
 if cl.isOptionTriggered("nCores"):
-    nCores = int(cl.getOptionValues("nCores")[0])
+  nCores = int(cl.getOptionValues("nCores")[0])
 
 if len(outFilesBaseName) > 200: outFilesBaseName = outFilesBaseName[0:200]
 print(tColors.goldColor + "Output files base name : " + tColors.resetColor + outFilesBaseName)
@@ -88,29 +89,28 @@ executableScriptPath = scriptFolder + "/Script_" + outFilesBaseName + ".sh"
 liveLogPath = f"{logFolder}/log_{outFilesBaseName}.log"
 cmdForJob = f"{cmdToJob} &> {liveLogPath}"
 
-
 if socket.gethostname().endswith('.cern.ch'):
 
-    # executionFolder = executionFolder.replace("/eos/home-a/adblanch", "/afs/cern.ch/user/a/adblanch/eos")
-    liveLogPath = f"/eos/home-a/adblanch/logs/{cl.trailArgList[0]}/log_{outFilesBaseName}.log"
-    tIO.mkdir(f"/eos/home-a/adblanch/logs/{cl.trailArgList[0]}")
-    # envTransferCmd = "source $HOME/.profile"
-    cmdForJob = f"{cmdToJob} &> {liveLogPath}"
+  # executionFolder = executionFolder.replace("/eos/home-a/adblanch", "/afs/cern.ch/user/a/adblanch/eos")
+  liveLogPath = f"/eos/home-a/adblanch/logs/{cl.trailArgList[0]}/log_{outFilesBaseName}.log"
+  tIO.mkdir(f"/eos/home-a/adblanch/logs/{cl.trailArgList[0]}")
+  # envTransferCmd = "source $HOME/.profile"
+  cmdForJob = f"{cmdToJob} &> {liveLogPath}"
 
-    JobFlavour = "workday"
-    if cl.isOptionTriggered("shortJob"):
-        JobFlavour = "longlunch"
-    elif cl.isOptionTriggered("longJob"):
-        JobFlavour = "testmatch"
-    # espresso     = 20 minutes
-    # microcentury = 1 hour
-    # longlunch    = 2 hours
-    # workday      = 8 hours
-    # tomorrow     = 1 day
-    # testmatch    = 3 days
-    # nextweek     = 1 week
+  JobFlavour = "workday"
+  if cl.isOptionTriggered("shortJob"):
+    JobFlavour = "longlunch"
+  elif cl.isOptionTriggered("longJob"):
+    JobFlavour = "testmatch"
+  # espresso     = 20 minutes
+  # microcentury = 1 hour
+  # longlunch    = 2 hours
+  # workday      = 8 hours
+  # tomorrow     = 1 day
+  # testmatch    = 3 days
+  # nextweek     = 1 week
 
-    condorSubFile = f"""
+  condorSubFile = f"""
 notify_user    = adrien.blanchet@cern.ch
 notification   = Error
 executable     = {executableScriptPath}
@@ -124,40 +124,39 @@ request_disk   = 10G
 getenv         = True
 queue
 """
-    open(scriptFolder + "/Script_" + outFilesBaseName + ".sub", 'w').write(condorSubFile)
+  open(scriptFolder + "/Script_" + outFilesBaseName + ".sub", 'w').write(condorSubFile)
 
-    jobSubCmd = f"cd $HOME && condor_submit {scriptFolder}/Script_{outFilesBaseName}.sub && cd -"
+  jobSubCmd = f"cd $HOME && condor_submit {scriptFolder}/Script_{outFilesBaseName}.sub && cd -"
 else:
 
-    # > Preparing job script
-    jobSubArgList = list()
-    jobSubArgList.append("sbatch")
+  # > Preparing job script
+  jobSubArgList = list()
+  jobSubArgList.append("sbatch")
 
-    if socket.gethostname().endswith('.baobab') or socket.gethostname().endswith('.yggdrasil'):
-        jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
-        jobSubArgList.append("-p shared-cpu")
-        jobSubArgList.append("--time=12:00:00")
+  if socket.gethostname().endswith('.baobab') or socket.gethostname().endswith('.yggdrasil'):
+    jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
+    jobSubArgList.append("-p shared-cpu")
+    jobSubArgList.append("--time=12:00:00")
+  else:
+    # CCLYON
+    jobSubArgList.append("-L sps")
+    jobSubArgList.append("--account=" + groupName)
+    jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
+    # https://doc.cc.in2p3.fr/fr/Computing/slurm/submit.html#sbatch-computing
+    if cl.isOptionTriggered("longJob"):
+      jobSubArgList.append("--time=72:00:00")
     else:
-        # CCLYON
-        jobSubArgList.append("-L sps")
-        jobSubArgList.append("--account=" + groupName)
-        jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
-        # https://doc.cc.in2p3.fr/fr/Computing/slurm/submit.html#sbatch-computing
-        if cl.isOptionTriggered("longJob"):
-            jobSubArgList.append("--time=72:00:00")
-        else:
-            jobSubArgList.append("--time=12:00:00")
+      jobSubArgList.append("--time=12:00:00")
 
-    # jobSubArgList.append("-n " + str(nCores))
-    jobSubArgList.append("-c " + str(nCores))
+  # jobSubArgList.append("-n " + str(nCores))
+  jobSubArgList.append("-c " + str(nCores))
 
-    jobSubArgList.append("--mem=" + getJobMaxRamStr(nCores) + "G")
+  jobSubArgList.append("--mem=" + getJobMaxRamStr(nCores) + "G")
 
-    jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
-    jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
-    jobSubArgList.append(scriptFolder + "/Script_" + outFilesBaseName + ".sh")
-    jobSubCmd = " ".join(jobSubArgList)
-
+  jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
+  jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
+  jobSubArgList.append(scriptFolder + "/Script_" + outFilesBaseName + ".sh")
+  jobSubCmd = " ".join(jobSubArgList)
 
 cmdBashScript = f"""#! /bin/bash
 
@@ -192,12 +191,12 @@ print(f"{tColors.greenColor}Log path: {tColors.resetColor}{liveLogPath}")
 
 # > Launching Job
 if not cl.isOptionTriggered("debug"):
-    if cl.isOptionTriggered("interactive"):
-        os.system(cmdToJob)
-    else:
-        print(tColors.blueColor)
-        os.system(jobSubCmd)
-        print(tColors.resetColor)
+  if cl.isOptionTriggered("interactive"):
+    os.system(cmdToJob)
+  else:
+    print(tColors.blueColor)
+    os.system(jobSubCmd)
+    print(tColors.resetColor)
 
 # time.sleep(1)
 print(tColors.redColor + "************** Launch command ended. **************" + tColors.resetColor)
