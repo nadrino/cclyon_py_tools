@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import getpass
 import json
 import time
@@ -21,9 +20,6 @@ cl.keepTailArgs = True
 cl.printConfigSummary()
 cl.readCommandLineArgs()
 
-# if len(cl.trailArgList) != 0:
-#     print(tColors.warning, "Extra arguments :", " ".join(cl.trailArgList))
-
 
 redColor = ""
 resetColor = ""
@@ -35,27 +31,9 @@ if not cl.isOptionTriggered("noColor"):
     goldColor = tColors.goldColor
     greenColor = tColors.greenColor
 
-# filePath = os.getenv("HOME") + "/squeue.json"
-# os.system("squeue -u $(whoami) --json > " + filePath)
-
 output = subprocess.check_output("squeue -u $(whoami) --json", shell=True, text=True).strip()
 data = json.loads(output)
 
-
-# if not os.path.isfile(filePath):
-#     print(tColors.error + filePath + " has not been found.")
-#     exit(1)
-#
-#
-# data = json.load(open(filePath, 'r'))
-
-# nRunning = 0
-# nPending = 0
-# for job in data['jobs']:
-#     if job["job_state"] == "PENDING":
-#         nPending += 1
-#     if job["job_state"] == "RUNNING":
-#         nRunning += 1
 
 jobDataMask = list()
 jobDataMask.append("Start time")
@@ -168,5 +146,3 @@ docString.append("To see the full script names add the option : --full-script-na
 print("\n".join(docString))
 print("\n".join(table))
 print("\n".join(docString))
-
-# os.system("rm " + filePath)
