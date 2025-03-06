@@ -114,6 +114,7 @@ def generateTableStr(jobList_):
             colList.append(job_.nCpu)
             colList.append(job_.sinceToStr())
             colList.append(job_.script)
+        return colList
 
 
     def maxWidth(colList_):
