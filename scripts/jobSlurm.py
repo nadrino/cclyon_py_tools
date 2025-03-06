@@ -75,7 +75,7 @@ for jobId in jobIdList:
             continue
 
         jobList.append(JobInfo())
-        jobList[-1].id = str(job['id'])
+        jobList[-1].id = str(job['job_id'])
         jobList[-1].state = job['job_state'][0]
         jobList[-1].script = str(job["name"])
 
