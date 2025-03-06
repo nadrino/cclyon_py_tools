@@ -127,6 +127,7 @@ def generateTableStr(jobList_):
     for job in jobList_:
         linesList.append(generateColList(job))
 
+    print(linesList)
     for colList in linesList:
         maxWidth(colList)
 
