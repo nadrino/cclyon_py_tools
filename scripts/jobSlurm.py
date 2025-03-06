@@ -53,7 +53,7 @@ class JobInfo:
         if self.state == "RUNNING":
             out += "R:"
         else:
-            out += "Q:"
+            out += "P:"
 
         out += f"{days}d"
         out += f"{hours:02}:"
