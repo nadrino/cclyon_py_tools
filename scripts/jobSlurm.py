@@ -84,7 +84,7 @@ for jobId in jobIdList:
         else:
             jobList[-1].nCpu = job["cpus"]
 
-        if jobList[-1].state is "RUNNING":
+        if jobList[-1].state == "RUNNING":
             jobList[-1].since = job["start_time"]["number"]
         else:
             jobList[-1].since = job["submit_time"]["number"]
