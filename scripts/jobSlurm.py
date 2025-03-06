@@ -51,14 +51,14 @@ class JobInfo:
         minutes, seconds = divmod(remainder, 60)
         out = str()
         if self.state == "RUNNING":
-            out += "RUNNING:"
+            out += "R:"
         else:
-            out += "PENDING:"
+            out += "P:"
 
-        if(days!=0): out += f"{days}d"
-        if(hours!=0): out += f"{hours:02}:"
-        if(minutes!=0): out += f"{minutes:02}:"
-        if(seconds!=0): out += f"{seconds:02}"
+        out += f"{days}d"
+        out += f"{hours:02}:"
+        out += f"{minutes:02}:"
+        out += f"{seconds:02}"
         return out
 
 jobIdList = subprocess.check_output("squeue -u $(whoami) --json | jq -r '.jobs[].job_id'", shell=True, text=True).strip().split('\n')
