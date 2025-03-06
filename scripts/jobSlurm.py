@@ -106,7 +106,7 @@ def generateTableStr(jobList_):
         colList = list()
         if job_ is None:
             colList.append("ID")
-            colList.append("CPU")
+            colList.append("N")
             colList.append("Since")
             colList.append("Script")
         else:
