@@ -136,17 +136,17 @@ else:
   if socket.gethostname().endswith('.baobab') or socket.gethostname().endswith('.yggdrasil'):
     jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
     jobSubArgList.append("-p shared-cpu")
-    jobSubArgList.append("--time=12:00:00")
   else:
     # CCLYON
     jobSubArgList.append("-L sps")
     jobSubArgList.append("--account=" + groupName)
     jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
     # https://doc.cc.in2p3.fr/fr/Computing/slurm/submit.html#sbatch-computing
-    if cl.isOptionTriggered("longJob"):
-      jobSubArgList.append("--time=72:00:00")
-    else:
-      jobSubArgList.append("--time=12:00:00")
+
+  if cl.isOptionTriggered("longJob"):
+    jobSubArgList.append("--time=72:00:00")
+  else:
+    jobSubArgList.append("--time=24:00:00")
 
   # jobSubArgList.append("-n " + str(nCores))
   jobSubArgList.append("-c " + str(nCores))
