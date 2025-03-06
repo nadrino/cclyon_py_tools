@@ -5,6 +5,7 @@ import getpass
 import json
 import time
 import subprocess
+from datetime import datetime
 
 import GenericToolbox.IO as tIO
 import GenericToolbox.Colors as tColors
@@ -31,57 +32,105 @@ if not cl.isOptionTriggered("noColor"):
     goldColor = tColors.goldColor
     greenColor = tColors.greenColor
 
-output = subprocess.check_output("squeue -u $(whoami) --json", shell=True, text=True).strip()
-data = json.loads(output)
 
+class JobInfo:
+    def __init__(self):
+        self.id = None
+        self.state = None
+        self.script = None
+        self.duration = None
+        self.nCpu = None
+        self.since = None
 
-jobDataMask = list()
-jobDataMask.append("Start time")
+    def sinceToStr(self):
+        # Convert the Unix timestamp to a datetime object
+        elapsed = datetime.now() - datetime.fromtimestamp(self.since)
+        # Extract days, hours, minutes, and seconds from the time difference
+        days = elapsed.days
+        hours, remainder = divmod(elapsed.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        out = str()
+        if self.state == "RUNNING":
+            out += "R->"
+        else:
+            out += "P->"
 
-runningJobTable = dict()
-runningJobTable["Job-id"] = list()
-runningJobTable["Start time"] = list()
-runningJobTable["State"] = list()
-runningJobTable["CPUs"] = list()
-runningJobTable["Script name"] = list()
+        if(days!=0): out += f"{days}d"
+        if(hours!=0): out += f"{hours}:"
+        if(minutes!=0): out += f"{minutes}:"
+        if(seconds!=0): out += f"{seconds}"
+        return out
 
-header = True
-separation_bar = ''
-for job in data['jobs']:
-    if job['user_name'] != getpass.getuser():
-        continue
+jobIdList = subprocess.check_output("squeue -u $(whoami) --json | jq -r '.jobs[].job_id'", shell=True, text=True).strip().split('\n')
 
-    runningJobTable["Job-id"].append(job["job_id"])
-    runningJobTable["State"].append(job["job_state"])
-    if isinstance(job["cpus"], dict):
-        runningJobTable["CPUs"].append(job["cpus"]["number"])
-    else:
-        runningJobTable["CPUs"].append(job["cpus"])
-    runningJobTable["Script name"].append(job["name"])
-    runningJobTable["Start time"].append("")
-    if runningJobTable["State"][-1] == "RUNNING":
-        runningJobTable["Start time"][-1] = str(time.ctime(job["start_time"]))
+jobList = list()
+for jobId in jobIdList:
+    data = json.loads(
+        subprocess.check_output(f"scontrol show job {jobId} --json", shell=True, text=True).strip()
+    )
+
+    # it still provides a list, but with more info
+    for job in data['jobs']:
+        if job['user_name'] != getpass.getuser():
+            continue
+
+        jobList.append(JobInfo())
+        jobList[-1].id = str(job['id'])
+        jobList[-1].state = job['job_state'][0]
+        jobList[-1].script = str(job["name"])
+
+        if isinstance(job["cpus"], dict):
+            jobList[-1].nCpu = job["cpus"]["number"]
+        else:
+            jobList[-1].nCpu = job["cpus"]
+
+        if jobList[-1].state is "RUNNING":
+            jobList[-1].since = job["start_time"]["number"]
+        else:
+            jobList[-1].since = job["submit_time"]["number"]
+
 
 nRunning = 0
 nPending = 0
 
-def generateTableStr(dict_):
-    colWidthList = list()
-    colKeyList = list()
-    nEntries = 0
 
+def generateTableStr(jobList_):
     global nRunning
     global nPending
 
-    for title, values in dict_.items():
-        if title in jobDataMask: continue
+    outStrList = list()
+    linesList = list() # list of columns
+    colWidthList = list()
 
-        colWidthList.append(len(title))
-        colKeyList.append(title)
-        nEntries = len(values)
-        for value in values:
-            colWidthList[-1] = max(colWidthList[-1], len(str(value)))
+    def generateColList(job_):
+        colList = list()
+        if job_ is None:
+            colList.append("ID")
+            colList.append("CPU")
+            colList.append("Since")
+            colList.append("Script")
+        else:
+            colList.append(job_.id)
+            colList.append(job_.nCpu)
+            colList.append(job_.sinceToStr())
+            colList.append(job_.script)
 
+
+    def maxWidth(colList_):
+        if len(colWidthList) == 0:
+            for col in colList_:
+                colWidthList.append(0)
+        for iCol in range(len(colList_)):
+            colWidthList[iCol] = max(colWidthList[iCol], len(str(colList_[iCol])))
+
+    linesList.append(generateColList(None))
+    for job in jobList_:
+        linesList.append(generateColList(job))
+
+    for colList in linesList:
+        maxWidth(colList)
+
+    # regularise last line
     colWidthList[-1] = \
         tIO.getTerminalSize()[0] \
         - sum(colWidthList[:-1]) \
@@ -109,34 +158,23 @@ def generateTableStr(dict_):
 
         return out
 
-    linesList = list()
-    linesList.append(getLine("┬"))
-    linesList.append(getLine("│", colKeyList))
-    linesList.append(getLine("┼"))
+    outStrList.append(getLine("┬"))
+    isTitle = True
+    for line in linesList:
+        colorStr = None
+        if line[1][0] == 'R':
+            colorStr = greenColor
+        if line[1][0] == 'P':
+            colorStr = goldColor
+        outStrList.append(getLine("│", line, colorStr))
+        if isTitle:
+            isTitle = False
+            outStrList.append(getLine("┼"))
+    outStrList.append(getLine("┴"))
 
-    for iJob in range(nEntries):
-        entryColor = None
+    return outStrList
 
-        lineContent = list()
-        for key, values in dict_.items():
-            if key in jobDataMask: continue
-
-            if key == "State":
-                if "RUNNING" in values[iJob]:
-                    nRunning += 1
-                    entryColor = greenColor
-                elif "PENDING" in values[iJob]:
-                    nPending += 1
-                    entryColor = goldColor
-            lineContent.append(values[iJob])
-
-        linesList.append(getLine("│", lineContent, entryColor))
-
-    linesList.append(getLine("┴"))
-
-    return linesList
-
-table = generateTableStr(runningJobTable)
+table = generateTableStr(jobList)
 docString = list()
 docString.append(redColor + "-> Number of remaining jobs : " + str(nRunning + nPending) + resetColor)
 docString.append(redColor + "-> Number of running jobs : " + str(nRunning) + resetColor)
