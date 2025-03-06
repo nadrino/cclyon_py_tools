@@ -61,34 +61,31 @@ class JobInfo:
         out += f"{seconds:02}"
         return out
 
-jobIdList = subprocess.check_output("squeue -u $(whoami) --json | jq -r '.jobs[].job_id'", shell=True, text=True).strip().split('\n')
 
-jobList = list()
-for jobId in jobIdList:
-    data = json.loads(
-        subprocess.check_output(f"scontrol show job {jobId} --json", shell=True, text=True).strip()
+data = json.loads(
+        subprocess.check_output("squeue -u $(whoami) --json", shell=True, text=True).strip()
     )
 
-    # it still provides a list, but with more info
-    for job in data['jobs']:
-        if job['user_name'] != getpass.getuser():
-            continue
+jobList = list()
+# it still provides a list, but with more info
+for job in data['jobs']:
+    if job['user_name'] != getpass.getuser():
+        continue
 
-        jobList.append(JobInfo())
-        jobList[-1].id = str(job['job_id'])
-        jobList[-1].state = job['job_state'][0]
-        jobList[-1].script = str(job["name"])
+    jobList.append(JobInfo())
+    jobList[-1].id = str(job['job_id'])
+    jobList[-1].state = job['job_state'][0]
+    jobList[-1].script = str(job["name"])
 
-        if isinstance(job["cpus"], dict):
-            jobList[-1].nCpu = job["cpus"]["number"]
-        else:
-            jobList[-1].nCpu = job["cpus"]
+    if isinstance(job["cpus"], dict):
+        jobList[-1].nCpu = job["cpus"]["number"]
+    else:
+        jobList[-1].nCpu = job["cpus"]
 
-        if jobList[-1].state == "RUNNING":
-            jobList[-1].since = job["start_time"]["number"]
-        else:
-            jobList[-1].since = job["submit_time"]["number"]
-
+    if jobList[-1].state == "RUNNING":
+        jobList[-1].since = job["start_time"]["number"]
+    else:
+        jobList[-1].since = job["submit_time"]["number"]
 
 nRunning = 0
 nPending = 0
