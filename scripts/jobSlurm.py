@@ -164,9 +164,9 @@ def generateTableStr(jobList_):
     isTitle = True
     for line in linesList:
         colorStr = None
-        if line[1][0] == 'R':
+        if line[2][0] == 'R':
             colorStr = greenColor
-        if line[1][0] == 'P':
+        if line[2][0] == 'P':
             colorStr = goldColor
         outStrList.append(getLine("│", line, colorStr))
         if isTitle:
