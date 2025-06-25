@@ -70,7 +70,7 @@ outFilesBaseName = f"{tIO.getNowTimeString()}_{duplicateInt}"
 # check if already exists
 while len(glob.glob(f"{scriptFolder}/Script_{outFilesBaseName}*")) != 0:
   duplicateInt += 1
-  outFilesBaseName += f"{tIO.getNowTimeString()}_{duplicateInt}"
+  outFilesBaseName = f"{tIO.getNowTimeString()}_{duplicateInt}"
 
 for cmdArg in cl.trailArgList:
   argElement = cmdArg  # Copy string object
