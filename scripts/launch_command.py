@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+import glob
 
 from GenericToolbox import IO as tIO
 from GenericToolbox import Old as tOld
@@ -59,8 +60,18 @@ cmdToJob = " ".join(cl.trailArgList)
 print(tColors.greenColor + "Running command : " + tColors.resetColor + cmdToJob)
 print(tColors.greenColor + "Running from : " + tColors.resetColor + executionFolder)
 
+logFolder = JOBS_DIR + "/logs/" + cl.trailArgList[0] + "/"
+scriptFolder = JOBS_DIR + "/scripts/" + cl.trailArgList[0] + "/"
+
 # > Outfile names
-outFilesBaseName = tIO.getNowTimeString()
+duplicateInt = 0
+outFilesBaseName = f"{tIO.getNowTimeString()}_{duplicateInt}"
+
+# check if already exists
+while len(glob.glob(f"{scriptFolder}/Script_{outFilesBaseName}*")) != 0:
+  duplicateInt += 1
+  outFilesBaseName += f"{tIO.getNowTimeString()}_{duplicateInt}"
+
 for cmdArg in cl.trailArgList:
   argElement = cmdArg  # Copy string object
   argElement = argElement.replace("@", "X")  # Replacing special characters
@@ -77,8 +88,6 @@ if cl.isOptionTriggered("nCores"):
 if len(outFilesBaseName) > 200: outFilesBaseName = outFilesBaseName[0:200]
 print(tColors.goldColor + "Output files base name : " + tColors.resetColor + outFilesBaseName)
 
-logFolder = JOBS_DIR + "/logs/" + cl.trailArgList[0] + "/"
-scriptFolder = JOBS_DIR + "/scripts/" + cl.trailArgList[0] + "/"
 
 tIO.mkdir(logFolder)
 tIO.mkdir(scriptFolder)
@@ -161,7 +170,7 @@ else:
 
   jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
   jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
-  jobSubArgList.append(scriptFolder + "/Script_" + outFilesBaseName + ".sh")
+  jobSubArgList.append(executableScriptPath)
   jobSubCmd = " ".join(jobSubArgList)
 
 cmdBashScript = f"""#! /bin/bash
