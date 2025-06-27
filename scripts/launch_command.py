@@ -60,8 +60,8 @@ cmdToJob = " ".join(cl.trailArgList)
 print(tColors.greenColor + "Running command : " + tColors.resetColor + cmdToJob)
 print(tColors.greenColor + "Running from : " + tColors.resetColor + executionFolder)
 
-logFolder = JOBS_DIR + "/logs/" + cl.trailArgList[0] + "/"
-scriptFolder = JOBS_DIR + "/scripts/" + cl.trailArgList[0] + "/"
+logFolder = JOBS_DIR + "/logs/" + cl.trailArgList[0].split("/")[-1] + "/"
+scriptFolder = JOBS_DIR + "/scripts/" + cl.trailArgList[0].split("/")[-1] + "/"
 
 # > Outfile names
 duplicateInt = 0
@@ -101,8 +101,8 @@ cmdForJob = f"{cmdToJob} &> {liveLogPath}"
 if socket.gethostname().endswith('.cern.ch'):
 
   # executionFolder = executionFolder.replace("/eos/home-a/adblanch", "/afs/cern.ch/user/a/adblanch/eos")
-  liveLogPath = f"/eos/home-a/adblanch/logs/{cl.trailArgList[0]}/log_{outFilesBaseName}.log"
-  tIO.mkdir(f"/eos/home-a/adblanch/logs/{cl.trailArgList[0]}")
+  liveLogPath = f"{logFolder}/log_{outFilesBaseName}.log"
+  tIO.mkdir(f"{logFolder}")
   # envTransferCmd = "source $HOME/.profile"
   cmdForJob = f"{cmdToJob} &> {liveLogPath}"
 
