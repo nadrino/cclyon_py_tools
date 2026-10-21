@@ -4,7 +4,8 @@ CCLyon python tools
 `launch_command.py -pc 5 command ...` requests five CPUs using
 one hardware thread per physical core on Slurm. Put launcher options before the
 command. The option passes `--hint=nomultithread` to `sbatch` and runs the workload
-through a single-task `srun` with the same hint. The affinity mask is printed in
+through a single-task `srun` with `--threads-per-core=1` and explicit
+`--cpu-bind=verbose,threads`. The affinity mask is printed in
 the workload log. Set the application's own thread count to five as well.
 
 `--physical-cores 5` is the long form of `-pc 5`. Use either `-mc` or `-pc`,

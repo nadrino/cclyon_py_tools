@@ -186,7 +186,7 @@ else:
     # Apply affinity to the actual workload as well as requesting the allocation.
     # bash -c preserves the launcher's existing shell-command semantics.
     cmdForJob = (f"srun --nodes=1 --ntasks=1 --cpus-per-task={nCores} "
-                 f"--hint=nomultithread --cpu-bind=verbose "
+                 f"--threads-per-core=1 --cpu-bind=verbose,threads "
                  f"bash -c {shlex.quote(cmdToJob)} &> {shlex.quote(liveLogPath)}")
 
   jobSubArgList.append("--mem=" + getJobMaxRamStr(nCores) + "G")
