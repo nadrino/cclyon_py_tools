@@ -8,6 +8,7 @@ from GenericToolbox import Colors as tColors
 from GenericToolbox import CmdLineReader
 
 import os
+import shlex
 import socket
 import stat
 
@@ -35,6 +36,9 @@ print(tColors.redColor + "************** Launch command starts **************" +
 
 cl = CmdLineReader.CmdLineReader()
 cl.addOption("nCores", ["-mc"], description_="Trigger multi-core queue and specify nb threads/slots", nbExpectedArgs_=1)
+cl.addOption("physicalCores", ["-pc", "--physical-cores"],
+             description_="Slurm: specify nb physical cores, using one hardware thread per core",
+             nbExpectedArgs_=1)
 cl.addOption("debug", ["-debug"], description_="Trigger debug mode", nbExpectedArgs_=0)
 cl.addOption("shortJob", ["-short"], description_="longlunch approx 2h", nbExpectedArgs_=0)
 cl.addOption("longJob", ["-long"], description_="Long time jobs (72h instead of 24h)", nbExpectedArgs_=0)
@@ -51,6 +55,14 @@ cl.printTriggeredArgs()
 if len(cl.trailArgList) == 0:
   print(tColors.error, "No command specified to be launched")
   exit(1)
+
+if cl.isOptionTriggered("physicalCores"):
+  if cl.isOptionTriggered("nCores"):
+    raise ValueError("Use either -mc or -pc, not both.")
+  if socket.gethostname().endswith('.cern.ch'):
+    raise ValueError("-pc is supported for Slurm submissions, not CERN HTCondor.")
+  if cl.isOptionTriggered("interactive"):
+    raise ValueError("-pc requires a Slurm submission; -interactive runs directly in the current shell.")
 
 if cl.isOptionTriggered("group"):
   groupName = cl.getOptionValues("group")[0]
@@ -84,6 +96,10 @@ for cmdArg in cl.trailArgList:
 nCores = 1
 if cl.isOptionTriggered("nCores"):
   nCores = int(cl.getOptionValues("nCores")[0])
+if cl.isOptionTriggered("physicalCores"):
+  nCores = int(cl.getOptionValues("physicalCores")[0])
+  if nCores < 1:
+    raise ValueError("-pc requires a positive core count.")
 
 if len(outFilesBaseName) > 200: outFilesBaseName = outFilesBaseName[0:200]
 print(tColors.goldColor + "Output files base name : " + tColors.resetColor + outFilesBaseName)
@@ -165,6 +181,13 @@ else:
 
   # jobSubArgList.append("-n " + str(nCores))
   jobSubArgList.append("-c " + str(nCores))
+  if cl.isOptionTriggered("physicalCores"):
+    jobSubArgList.extend(["--nodes=1", "--ntasks=1", "--hint=nomultithread"])
+    # Apply affinity to the actual workload as well as requesting the allocation.
+    # bash -c preserves the launcher's existing shell-command semantics.
+    cmdForJob = (f"srun --nodes=1 --ntasks=1 --cpus-per-task={nCores} "
+                 f"--hint=nomultithread --cpu-bind=verbose "
+                 f"bash -c {shlex.quote(cmdToJob)} &> {shlex.quote(liveLogPath)}")
 
   jobSubArgList.append("--mem=" + getJobMaxRamStr(nCores) + "G")
 
