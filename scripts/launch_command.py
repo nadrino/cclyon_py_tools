@@ -29,7 +29,7 @@ cl.addOption("physicalCores", ["-pc", "--physical-cores"],
              nbExpectedArgs_=1)
 cl.addOption("debug", ["-debug"], description_="Trigger debug mode", nbExpectedArgs_=0)
 cl.addOption("gpu", ["--gpu"],
-             description_="Request one GPU on gpu_v100_interactive (4 CPUs and 8 hours by default)",
+             description_="Request one GPU on gpu_v100 (4 CPUs and 8 hours by default)",
              nbExpectedArgs_=0)
 cl.addOption("shortJob", ["-short"], description_="longlunch approx 2h", nbExpectedArgs_=0)
 cl.addOption("longJob", ["-long"], description_="Long time jobs (72h instead of 8h at CCLYON)", nbExpectedArgs_=0)
@@ -49,7 +49,7 @@ if cl.isOptionTriggered("gpu"):
   if socket.gethostname().endswith('.cern.ch'):
     raise ValueError("--gpu is supported for Slurm submissions, not CERN HTCondor.")
   if cl.isOptionTriggered("longJob"):
-    raise ValueError("--gpu requests 8 hours on gpu_v100_interactive; -long is not supported.")
+    raise ValueError("--gpu requests 8 hours on gpu_v100; -long is not supported.")
 
 if cl.isOptionTriggered("physicalCores"):
   if cl.isOptionTriggered("nCores"):
@@ -155,7 +155,7 @@ else:
   jobSubArgList.append("sbatch")
 
   if cl.isOptionTriggered("gpu"):
-    jobSubArgList.extend(["-p gpu_v100_interactive", "--gpus=1", "--time=08:00:00"])
+    jobSubArgList.extend(["-p gpu_v100", "--gpus=1", "--time=08:00:00"])
     jobSubArgList.append("-L sps")
     jobSubArgList.append("--account=" + groupName)
     jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
