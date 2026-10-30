@@ -12,18 +12,6 @@ import shlex
 import socket
 import stat
 
-# adjustable parameters?
-maxRamPerCpu = 5  # GB
-minRamPerJob = 8  # GB
-maxRamPerJob = 63  # GB
-
-
-def getJobMaxRamStr(nCores_):
-  maxRam = min(maxRamPerCpu * nCores_, maxRamPerJob)
-  maxRam = max(maxRam, minRamPerJob)
-  return str(maxRam)
-
-
 # Checking required env variables
 WORK_DIR = tIO.get_env_variable("WORK_DIR")
 JOBS_DIR = tIO.get_env_variable("JOBS_DIR")
@@ -40,10 +28,11 @@ cl.addOption("physicalCores", ["-pc", "--physical-cores"],
              description_="Slurm: specify nb physical cores, using one hardware thread per core",
              nbExpectedArgs_=1)
 cl.addOption("debug", ["-debug"], description_="Trigger debug mode", nbExpectedArgs_=0)
-cl.addOption("shortJob", ["-short"], description_="longlunch approx 2h", nbExpectedArgs_=0)
-cl.addOption("longJob", ["-long"], description_="Long time jobs (72h instead of 24h)", nbExpectedArgs_=0)
-cl.addOption("interactive", ["-interactive"], description_="Launch the generated script in interactive mode",
+cl.addOption("gpu", ["--gpu"],
+             description_="Request one GPU on gpu_v100_interactive (4 CPUs and 8 hours by default)",
              nbExpectedArgs_=0)
+cl.addOption("shortJob", ["-short"], description_="longlunch approx 2h", nbExpectedArgs_=0)
+cl.addOption("longJob", ["-long"], description_="Long time jobs (72h instead of 8h at CCLYON)", nbExpectedArgs_=0)
 cl.addOption("group", ["-g"], description_="Specify group", nbExpectedArgs_=1)
 
 cl.keepTailArgs = True
@@ -56,13 +45,17 @@ if len(cl.trailArgList) == 0:
   print(tColors.error, "No command specified to be launched")
   exit(1)
 
+if cl.isOptionTriggered("gpu"):
+  if socket.gethostname().endswith('.cern.ch'):
+    raise ValueError("--gpu is supported for Slurm submissions, not CERN HTCondor.")
+  if cl.isOptionTriggered("longJob"):
+    raise ValueError("--gpu requests 8 hours on gpu_v100_interactive; -long is not supported.")
+
 if cl.isOptionTriggered("physicalCores"):
   if cl.isOptionTriggered("nCores"):
     raise ValueError("Use either -mc or -pc, not both.")
   if socket.gethostname().endswith('.cern.ch'):
     raise ValueError("-pc is supported for Slurm submissions, not CERN HTCondor.")
-  if cl.isOptionTriggered("interactive"):
-    raise ValueError("-pc requires a Slurm submission; -interactive runs directly in the current shell.")
 
 if cl.isOptionTriggered("group"):
   groupName = cl.getOptionValues("group")[0]
@@ -93,13 +86,16 @@ for cmdArg in cl.trailArgList:
     if len(argElement) > 20: argElement = ".." + argElement[-20:-1]
     outFilesBaseName += "_" + argElement
 
-nCores = 1
+nCores = 4 if cl.isOptionTriggered("gpu") else 1
 if cl.isOptionTriggered("nCores"):
   nCores = int(cl.getOptionValues("nCores")[0])
 if cl.isOptionTriggered("physicalCores"):
   nCores = int(cl.getOptionValues("physicalCores")[0])
   if nCores < 1:
     raise ValueError("-pc requires a positive core count.")
+
+# Keep the previous sizing for small jobs; request 32 GB from 4 threads onward.
+jobRamGb = 32 if nCores >= 4 else max(8, 5 * nCores)
 
 if len(outFilesBaseName) > 200: outFilesBaseName = outFilesBaseName[0:200]
 print(tColors.goldColor + "Output files base name : " + tColors.resetColor + outFilesBaseName)
@@ -144,7 +140,7 @@ error          = {logFolder}/log_full_{outFilesBaseName}.err
 log            = {logFolder}/log_full_{outFilesBaseName}.log
 request_cpus   = {nCores}
 +JobFlavour    = {JobFlavour}
-request_memory = {getJobMaxRamStr(nCores)}G
+request_memory = {jobRamGb}G
 request_disk   = 10G
 getenv         = True
 queue
@@ -158,7 +154,12 @@ else:
   jobSubArgList = list()
   jobSubArgList.append("sbatch")
 
-  if socket.gethostname().endswith('.baobab') or socket.gethostname().endswith('.yggdrasil'):
+  if cl.isOptionTriggered("gpu"):
+    jobSubArgList.extend(["-p gpu_v100_interactive", "--gpus=1", "--time=08:00:00"])
+    jobSubArgList.append("-L sps")
+    jobSubArgList.append("--account=" + groupName)
+    jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
+  elif socket.gethostname().endswith('.baobab') or socket.gethostname().endswith('.yggdrasil'):
     jobSubArgList.append("--mail-user=adrien.blanchet@cern.ch")
     # looks like the maximum: https://doc.eresearch.unige.ch/hpc/slurm
     # sinfo
@@ -167,7 +168,7 @@ else:
       jobSubArgList.append("--time=48:00:00")
     else:
       jobSubArgList.append("-p shared-cpu")
-      jobSubArgList.append("--time=12:00:00")
+      jobSubArgList.append("--time=08:00:00")
   else:
     # CCLYON
     jobSubArgList.append("-L sps")
@@ -177,7 +178,7 @@ else:
     if cl.isOptionTriggered("longJob"):
       jobSubArgList.append("--time=72:00:00")
     else:
-      jobSubArgList.append("--time=24:00:00")
+      jobSubArgList.append("--time=08:00:00")
 
   # jobSubArgList.append("-n " + str(nCores))
   jobSubArgList.append("-c " + str(nCores))
@@ -189,7 +190,7 @@ else:
                  f"--threads-per-core=1 --cpu-bind=verbose,threads "
                  f"bash -c {shlex.quote(cmdToJob)} &> {shlex.quote(liveLogPath)}")
 
-  jobSubArgList.append("--mem=" + getJobMaxRamStr(nCores) + "G")
+  jobSubArgList.append(f"--mem={jobRamGb}G")
 
   jobSubArgList.append("-o " + logFolder + "/log_full_" + outFilesBaseName + ".log")
   jobSubArgList.append("-e " + logFolder + "/log_full_" + outFilesBaseName + ".err")
@@ -229,12 +230,9 @@ print(f"{tColors.greenColor}Log path: {tColors.resetColor}{liveLogPath}")
 
 # > Launching Job
 if not cl.isOptionTriggered("debug"):
-  if cl.isOptionTriggered("interactive"):
-    os.system(cmdToJob)
-  else:
-    print(tColors.blueColor)
-    os.system(jobSubCmd)
-    print(tColors.resetColor)
+  print(tColors.blueColor)
+  os.system(jobSubCmd)
+  print(tColors.resetColor)
 
 # time.sleep(1)
 print(tColors.redColor + "************** Launch command ended. **************" + tColors.resetColor)
